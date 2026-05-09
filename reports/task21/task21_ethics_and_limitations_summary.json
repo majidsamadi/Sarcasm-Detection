@@ -1,0 +1,36 @@
+{
+  "task_id": "21",
+  "task_name": "Ethics and Limitations",
+  "selected_model": "E03_RoBERTa_VersionA",
+  "main_risk_statement": "The system is a research and coursework demonstration. It should not be used to automatically remove, flag, penalize, or judge user content.",
+  "number_of_risks": 8,
+  "risk_severity_counts": {
+    "High": 4,
+    "Medium": 4
+  },
+  "ethical_principles": [
+    "Transparency",
+    "Privacy awareness",
+    "Human oversight",
+    "Non-punitive use",
+    "Context-aware interpretation",
+    "Bias awareness",
+    "Reproducibility"
+  ],
+  "responsible_use_rules": [
+    "Use the model for academic demonstration and exploratory analysis only.",
+    "Do not use the model to automatically remove, flag, penalize, or judge users.",
+    "Show the prediction confidence and communicate uncertainty.",
+    "Avoid exposing raw Reddit text samples in public reports or repositories.",
+    "Keep human review in the loop for any interpretation of model outputs.",
+    "Disclose dataset, preprocessing, evaluation, and model limitations clearly."
+  ],
+  "generated_files": {
+    "risk_register": "reports/task21/task21_risk_register.csv",
+    "responsible_use_checklist": "reports/task21/task21_responsible_use_checklist.md",
+    "risk_figure": "reports/task21/figures/task21_risk_severity_counts.png",
+    "summary_md": "reports/task21/task21_ethics_and_limitations_summary.md",
+    "readme": "reports/task21/README.md",
+    "progress_note": "reports/task21/task21_progress_note.txt"
+  }
+}

@@ -94,3 +94,4 @@ reports/ui_runs/**/*.txt
 reports/ui_runs/**/*.json
 reports/ui_runs/
 reports/task20b/local_only/**
+reports/task21/local_only/**

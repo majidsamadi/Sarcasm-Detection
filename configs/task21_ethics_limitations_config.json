@@ -1,0 +1,90 @@
+{
+  "task_id": "21",
+  "task_name": "Ethics and Limitations",
+  "project_title": "Sarcasm Detection in Social Media Text using RoBERTa",
+  "selected_model": "E03_RoBERTa_VersionA",
+  "final_model_family": "RoBERTa",
+  "preprocessing_version": "Version A - stopwords kept",
+  "input_strategy": "Text-only input using parent_comment + comment when context is available",
+  "main_risk_statement": "The system is a research and coursework demonstration. It should not be used to automatically remove, flag, penalize, or judge user content.",
+  "ethical_principles": [
+    "Transparency",
+    "Privacy awareness",
+    "Human oversight",
+    "Non-punitive use",
+    "Context-aware interpretation",
+    "Bias awareness",
+    "Reproducibility"
+  ],
+  "risk_levels": {
+    "Low": 1,
+    "Medium": 2,
+    "High": 3
+  },
+  "risk_register": [
+    {
+      "risk_id": "R1",
+      "risk": "Misclassification of sarcasm",
+      "severity": "High",
+      "reason": "Sarcasm depends on context, tone, culture, and speaker intent. A wrong prediction may label genuine text as sarcastic or miss subtle sarcasm.",
+      "mitigation": "Show confidence score, communicate uncertainty, avoid automated punitive use, and require human interpretation."
+    },
+    {
+      "risk_id": "R2",
+      "risk": "Context loss",
+      "severity": "High",
+      "reason": "The model only uses text input and may not have full conversation history, user relationship, timing, or social context.",
+      "mitigation": "Use optional parent comment context, state that predictions are approximate, and avoid using the model for moderation decisions."
+    },
+    {
+      "risk_id": "R3",
+      "risk": "Dataset bias from Reddit data",
+      "severity": "High",
+      "reason": "The SARC dataset comes from Reddit and may reflect platform-specific language, communities, humor styles, and demographic patterns.",
+      "mitigation": "Limit claims to Reddit-style/social-media text and disclose that performance may not generalize to other platforms or cultures."
+    },
+    {
+      "risk_id": "R4",
+      "risk": "Privacy and sensitive text handling",
+      "severity": "Medium",
+      "reason": "Social media text may contain personal or sensitive information even if collected publicly.",
+      "mitigation": "Do not commit raw error samples to GitHub, keep local examples ignored, and use aggregate reporting instead of exposing raw user text."
+    },
+    {
+      "risk_id": "R5",
+      "risk": "Over-reliance on confidence score",
+      "severity": "Medium",
+      "reason": "A high probability score does not mean the prediction is always correct, especially for ambiguous sarcasm.",
+      "mitigation": "Present confidence as model confidence only, not truth certainty. Include clear wording in the UI."
+    },
+    {
+      "risk_id": "R6",
+      "risk": "Deployment misuse",
+      "severity": "High",
+      "reason": "A hosted app could be misunderstood as a production-ready moderation tool.",
+      "mitigation": "Add a visible research-demo warning and disable heavy training/execution features on public hosting."
+    },
+    {
+      "risk_id": "R7",
+      "risk": "Compute and reproducibility limitations",
+      "severity": "Medium",
+      "reason": "Training used a practical sample size due to local compute constraints, while evaluation used the full held-out test set.",
+      "mitigation": "Report the training setup transparently and keep scripts/configs reproducible in GitHub."
+    },
+    {
+      "risk_id": "R8",
+      "risk": "Cultural and linguistic limitations",
+      "severity": "Medium",
+      "reason": "Sarcasm may vary across cultures, languages, dialects, memes, and community norms.",
+      "mitigation": "Avoid claiming universal sarcasm detection and recommend further testing on other communities or languages."
+    }
+  ],
+  "responsible_use_rules": [
+    "Use the model for academic demonstration and exploratory analysis only.",
+    "Do not use the model to automatically remove, flag, penalize, or judge users.",
+    "Show the prediction confidence and communicate uncertainty.",
+    "Avoid exposing raw Reddit text samples in public reports or repositories.",
+    "Keep human review in the loop for any interpretation of model outputs.",
+    "Disclose dataset, preprocessing, evaluation, and model limitations clearly."
+  ]
+}
