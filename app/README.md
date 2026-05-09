@@ -1,19 +1,46 @@
-# Task 20 Demo Interface
+# Demo Interfaces
 
-This folder contains the Streamlit demo for the sarcasm detection project.
+This folder contains two Streamlit interfaces for the sarcasm detection project.
 
-The demo loads the selected final model from Task 19:
+## 1. Basic Demo
 
-- Model: RoBERTa Version A
-- Local checkpoint: `models/roberta/versionA`
-- Preprocessing setting: Version A, stopwords kept
-- Input format: text-only input using `parent_comment + comment` when context is provided
-- Output: sarcastic or non-sarcastic prediction with confidence scores
+File:
 
-Run locally:
+```text
+app/streamlit_app.py
+```
+
+Run:
 
 ```bash
 bash run_task20_demo.sh
 ```
 
-Important: model checkpoints are local-only and are not pushed to GitHub.
+Purpose: simple prediction demo using the selected final model.
+
+## 2. Enhanced Interactive Dashboard
+
+File:
+
+```text
+app/enhanced_dashboard.py
+```
+
+Run:
+
+```bash
+bash run_enhanced_dashboard.sh
+```
+
+Purpose: complete AI/NLP workflow dashboard showing:
+
+- pipeline status
+- local task runner
+- live sarcasm prediction
+- model comparison
+- stopword impact analysis
+- reports explorer
+- error analysis
+- Hugging Face hosting readiness
+
+Important: the task-runner section is intended for local use. For public Hugging Face hosting, heavy training execution should be disabled or avoided.

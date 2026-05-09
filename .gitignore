@@ -88,3 +88,9 @@ repo_check.txt
 reports/task18/local_only/**
 reports/task20/local_only/**
 .streamlit/secrets.toml
+# UI runtime logs and local artifacts
+reports/ui_runs/**/*.log
+reports/ui_runs/**/*.txt
+reports/ui_runs/**/*.json
+reports/ui_runs/
+reports/task20b/local_only/**
