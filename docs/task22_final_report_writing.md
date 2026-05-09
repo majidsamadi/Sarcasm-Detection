@@ -21,4 +21,4 @@ This task documents the complete NLP workflow from preprocessing through demo in
 
 ## Purpose
 
-The generated documentation explains what was done, how each task contributed to the project, what issues were experienced, how the final model was selected, and how to run the project locally.
+The generated documentation explains what was done, how each task contributed to the project, what learning outcomes were gained, how the final model was selected, and how to run the project locally.

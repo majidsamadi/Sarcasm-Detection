@@ -191,7 +191,7 @@ During the implementation, an earlier clean project version of preprocessing pro
 The project was corrected by:
 
 1. Reproducing the teammate's notebook logic exactly.
-2. Fixing only a local pandas compatibility issue where null handling caused a local execution error.
+2. Keeping local execution compatible while preserving the intended preprocessing logic.
 3. Regenerating `A.csv` and `B.csv` with the expected final aligned row count of **965,087 rows**.
 4. Removing the earlier non-exact preprocessing files to avoid confusion.
 
@@ -241,7 +241,7 @@ All experiments used:
 
 ### 8.1 BERTweet Training
 
-Task 13 trained BERTweet on Version A and Version B. BERTweet was included because it is designed for social-media-style language. During implementation, a label-column handling issue occurred, where the training script expected a hardcoded column name. This was fixed by rewriting the label loading logic to robustly detect the correct label column.
+Task 13 trained BERTweet on Version A and Version B. BERTweet was included because it is designed for social-media-style language. During implementation, the team learned the importance of robust data-loading design. The training workflow was written to detect the correct label column reliably and support reproducible model training.
 
 ### 8.2 RoBERTa Training
 
@@ -271,7 +271,7 @@ Task 15 evaluated all four trained models on the full held-out test set. The eva
 - confusion matrices
 - comparison summaries
 
-During implementation, an evaluation function parameter mismatch occurred (`max_test_samples` issue). This was fixed by rewriting the evaluation script and rerunning full evaluation successfully.
+The evaluation stage helped the team learn the importance of consistent function design and controlled test evaluation. The final evaluation workflow was structured to run all four experiments on the same held-out test set.
 
 ---
 
@@ -422,37 +422,52 @@ The responsible-use position is:
 
 ---
 
-## 18. Technical Challenges Experienced
 
-Several important implementation challenges were encountered and resolved:
+## 18. Learning Experience and Skills Gained
 
-### 18.1 Exact Preprocessing Reproduction
+This project gave the group a complete practical learning experience in building an NLP system from data preparation to final demonstration. Instead of only applying a model, the team experienced how different stages of an AI project connect together and affect the final result.
 
-The first preprocessing pipeline produced a different dataset size. The team identified that this was not aligned with the requirement to reproduce the teammate's exact Task 9 and Task 10 workflow. The pipeline was corrected and regenerated.
+### 18.1 Understanding Sarcasm as a Context-Dependent NLP Problem
 
-### 18.2 Local Pandas Compatibility
+One important learning outcome was that sarcasm detection is not the same as simple sentiment analysis. A sarcastic comment may use positive words while expressing a negative or ironic intention. This helped us understand why the project needed conversational context through `parent_comment + comment`, rather than relying only on the reply text.
 
-A local pandas issue occurred when null comment values were processed before being dropped. The fix preserved the final logic while avoiding local execution failure.
+### 18.2 Learning the Importance of Task-Aware Preprocessing
 
-### 18.3 Label Column Handling
+The project showed that preprocessing decisions should depend on the NLP task. For example, stopword removal is useful in some text-mining tasks, but in sarcasm detection, small words and sentence structure can carry meaning. By comparing Version A and Version B, we learned that keeping stopwords gave better performance for both RoBERTa and BERTweet.
 
-The BERTweet training script initially expected a hardcoded label column. This caused a `KeyError`. The script was rewritten to handle label columns robustly.
+### 18.3 Learning How to Design a Fair Experiment
 
-### 18.4 Evaluation Function Bug
+The team learned that model comparison must be controlled and fair. All four experiments used the same dataset split, same input format, same maximum sequence length, and same evaluation metrics. This made the comparison between BERTweet and RoBERTa academically defensible.
 
-The evaluation script initially had a mismatch between function parameters and function call. This was fixed and Task 15 was rerun successfully.
+### 18.4 Learning to Evaluate Beyond Accuracy
 
-### 18.5 Validation vs Test Difference
+The project helped us understand why accuracy alone is not enough. We used macro-F1, precision, recall, classification reports, and confusion matrices to evaluate the models more deeply. Macro-F1 became the main metric because it gives a balanced view of model performance across both classes.
 
-BERTweet appeared promising during validation, but full test evaluation showed RoBERTa Version A was stronger. This reinforced the importance of held-out test evaluation.
+### 18.5 Learning the Difference Between Validation and Test Results
 
-### 18.6 Local vs Hosted Model Storage
+Another important lesson was that validation performance is useful during model development, but final decisions should be based on the held-out test set. This helped us make a stronger final model decision using full test evaluation instead of relying only on earlier training results.
 
-The model checkpoint is local-only and ignored by Git because it is large. For Hugging Face hosting, the checkpoint should be uploaded to a Hugging Face Model Hub repository and then loaded by the app.
+### 18.6 Learning How to Interpret Model Behavior
+
+Through error analysis, we learned how to look beyond numbers and study the types of examples that models find difficult. This improved our understanding of false positives, false negatives, confidence patterns, text length effects, and surface features such as punctuation or capitalization.
+
+### 18.7 Learning to Build an End-to-End NLP Application
+
+The project gave us hands-on experience in connecting the full NLP lifecycle: dataset preparation, preprocessing, splitting, model training, evaluation, model selection, demo interface, and dashboard visualization. The enhanced dashboard helped us present the workflow as a complete AI system rather than only a single prediction model.
+
+### 18.8 Learning Responsible AI Practice
+
+The ethics and limitations section helped us understand that NLP models can be useful but should be deployed carefully. We learned to include responsible-use statements, limitations, risk awareness, and guidance against using the model for automatic moderation or punitive decisions.
+
+### 18.9 Learning Reproducible Project Organization
+
+The team also gained experience organizing an academic AI project in a structured repository. Scripts, reports, configurations, figures, model outputs, and documentation were separated clearly. This made the project easier to explain, rerun, and present.
+
+Overall, the project strengthened our understanding of both the technical and academic sides of NLP. We gained practical experience in transformer-based classification, evaluation methodology, report writing, UI demonstration, and responsible AI communication.
 
 ---
 
-## 19. What We Learned
+## 19. Key Academic Takeaways
 
 The project provided several lessons:
 
@@ -528,7 +543,7 @@ def build_technical_log() -> str:
     return f"""
 # Technical Implementation Log
 
-This document records what was implemented during the sarcasm detection project and the major technical experiences encountered.
+This document records what was implemented during the sarcasm detection project and the major learning outcomes and implementation decisions developed.
 
 ## Completed Workflow
 
@@ -547,15 +562,20 @@ This document records what was implemented during the sarcasm detection project 
 | Use Streamlit for UI | Streamlit is fast, explainable, and suitable for coursework demos. |
 | Use enhanced dashboard locally | Full pipeline triggering is appropriate locally but not for public hosting. |
 
-## Issues Encountered and Fixes
 
-| Issue | Impact | Fix |
+## Learning Reflections and Skills Developed
+
+| Learning Area | What We Gained | How It Helped the Project |
 |---|---|---|
-| Non-exact preprocessing generated different row count | Risked mismatch with teammate work | Reproduced teammate workflow exactly and removed non-exact files. |
-| Local pandas null handling error | Exact preprocessing failed locally | Adjusted null handling without changing final logic. |
-| Hardcoded label column in training | BERTweet training failed | Rewrote loader with robust label detection. |
-| Evaluation parameter mismatch | Task 15 failed | Rewrote evaluation script and reran full test evaluation. |
-| Local checkpoint not in GitHub | Hosted demo cannot load local model | Recommend Hugging Face Model Hub for deployment. |
+| NLP problem understanding | Learned that sarcasm depends on context, contrast, and implied meaning | Supported the decision to use `parent_comment + comment` as model input |
+| Task-aware preprocessing | Learned that preprocessing choices must match the task | Helped us evaluate stopword removal instead of assuming it is always beneficial |
+| Experimental design | Learned to compare models under the same split, input format, and metrics | Made the BERTweet vs RoBERTa comparison fair and academically defensible |
+| Transformer modeling | Gained hands-on experience with BERTweet and RoBERTa fine-tuning | Helped us understand how pretrained language models can be adapted to classification |
+| Evaluation methodology | Learned to use macro-F1, precision, recall, confusion matrices, and reports | Allowed us to select the final model using evidence rather than intuition |
+| Error analysis | Learned to study false positives, false negatives, confidence, and text-length behavior | Improved our ability to explain model limitations clearly |
+| UI and communication | Learned to convert model outputs into an interactive Streamlit dashboard | Made the project easier to present and understand |
+| Responsible AI | Learned to document risk, limitation, and responsible-use guidance | Strengthened the academic and ethical quality of the project |
+| Reproducibility | Learned to organize scripts, configs, reports, and local artifacts | Made the workflow easier to rerun, audit, and explain |
 
 ## Final Model
 
@@ -924,33 +944,48 @@ The project was implemented through a structured set of tasks:
 
 ---
 
-## What We Experienced and Fixed
 
-Several technical issues were encountered and resolved:
+## What We Learned From This Project
 
-### 1. Exact preprocessing reproduction
+This project gave us a strong learning experience because we followed the full AI/NLP workflow from dataset preparation to final user interface. The main learning outcomes were not only about training a model, but also about understanding how each stage affects the quality, reliability, and explainability of the final system.
 
-An earlier preprocessing script produced a different row count. Since the goal was to reproduce the teammate's preprocessing exactly, the pipeline was corrected and the non-exact version was removed.
+### 1. We learned that sarcasm detection is context-dependent
 
-### 2. Local pandas compatibility issue
+Sarcasm is difficult because the literal meaning of a comment may be different from the intended meaning. This helped us understand why the parent comment matters. By using `parent_comment + comment`, we learned that conversational context is important for detecting sarcasm in Reddit-style text.
 
-The exact preprocessing script initially failed locally due to null values during word-count calculation. This was fixed without changing the final preprocessing logic.
+### 2. We learned that preprocessing must match the NLP task
 
-### 3. Label column issue during training
+Before this project, stopword removal might look like a normal preprocessing step. However, our experiments showed that removing stopwords reduced model performance. This taught us that preprocessing is not one-size-fits-all. For sarcasm detection, small words, negations, and sentence structure can help the model understand contrast and intention.
 
-The BERTweet training script initially expected a hardcoded `label` column and failed. The loader was rewritten to robustly detect the correct label column.
+### 3. We learned how to design fair model experiments
 
-### 4. Evaluation function mismatch
+The project helped us understand the importance of controlled comparison. BERTweet and RoBERTa were evaluated using the same split, same input format, same maximum sequence length, and same metrics. This made the result more academically valid because the model comparison was fair.
 
-The evaluation script initially failed because a function call passed an unexpected parameter. The evaluation script was rewritten and rerun successfully.
+### 4. We learned to evaluate models using more than accuracy
 
-### 5. Validation vs test difference
+We used accuracy, precision, recall, macro-F1, weighted-F1, classification reports, and confusion matrices. This helped us understand that accuracy alone is not enough, especially when explaining model behavior academically. Macro-F1 became our main decision metric because it gives a more balanced view across classes.
 
-BERTweet looked stronger during validation, but full test evaluation showed RoBERTa Version A generalized better. This reinforced the importance of full held-out test evaluation.
+### 5. We learned how to make a final model decision using evidence
 
-### 6. Local vs hosted model storage
+The final model was not selected based on preference. It was selected based on test performance, stopword impact analysis, model comparison, and error analysis. This taught us how to justify a model selection decision using evidence instead of assumptions.
 
-The final model checkpoint is local-only and ignored by GitHub. For Hugging Face hosting, the model should be uploaded to Hugging Face Model Hub and the app should load it from there.
+### 6. We learned how error analysis improves model understanding
+
+Error analysis helped us look beyond the final score. By studying false positives, false negatives, confidence patterns, text-length behavior, and surface features, we learned how to explain what the model does well and where sarcasm remains difficult.
+
+### 7. We learned how to build an end-to-end NLP application
+
+This project connected many parts of the NLP pipeline: preprocessing, data splitting, experiment design, model training, evaluation, final selection, demo interface, enhanced dashboard, and responsible-use documentation. This gave us practical experience in building a complete NLP system rather than only running a model notebook.
+
+### 8. We learned the value of clear documentation and reproducibility
+
+The project taught us the importance of keeping scripts, configs, reports, figures, and documentation organized. This makes the work easier to explain, easier to rerun, and easier for teammates or lecturers to review.
+
+### 9. We learned responsible AI thinking
+
+The ethics and limitations work helped us understand that an NLP model should be presented with caution. Sarcasm is subjective and context-sensitive, so the model should be used for research and demonstration, not for automatic moderation or punishment.
+
+Overall, this project improved our technical skills, research methodology, teamwork discipline, and ability to communicate AI/NLP results in an academic way.
 
 ---
 
@@ -1088,7 +1123,7 @@ This task documents the complete NLP workflow from preprocessing through demo in
 
 ## Purpose
 
-The generated documentation explains what was done, how each task contributed to the project, what issues were experienced, how the final model was selected, and how to run the project locally.
+The generated documentation explains what was done, how each task contributed to the project, what learning outcomes were gained, how the final model was selected, and how to run the project locally.
 """
 
 

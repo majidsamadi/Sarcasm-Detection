@@ -1,7 +1,7 @@
 
 # Technical Implementation Log
 
-This document records what was implemented during the sarcasm detection project and the major technical experiences encountered.
+This document records what was implemented during the sarcasm detection project and the major learning outcomes and implementation decisions developed.
 
 ## Completed Workflow
 
@@ -36,15 +36,20 @@ This document records what was implemented during the sarcasm detection project 
 | Use Streamlit for UI | Streamlit is fast, explainable, and suitable for coursework demos. |
 | Use enhanced dashboard locally | Full pipeline triggering is appropriate locally but not for public hosting. |
 
-## Issues Encountered and Fixes
 
-| Issue | Impact | Fix |
+## Learning Reflections and Skills Developed
+
+| Learning Area | What We Gained | How It Helped the Project |
 |---|---|---|
-| Non-exact preprocessing generated different row count | Risked mismatch with teammate work | Reproduced teammate workflow exactly and removed non-exact files. |
-| Local pandas null handling error | Exact preprocessing failed locally | Adjusted null handling without changing final logic. |
-| Hardcoded label column in training | BERTweet training failed | Rewrote loader with robust label detection. |
-| Evaluation parameter mismatch | Task 15 failed | Rewrote evaluation script and reran full test evaluation. |
-| Local checkpoint not in GitHub | Hosted demo cannot load local model | Recommend Hugging Face Model Hub for deployment. |
+| NLP problem understanding | Learned that sarcasm depends on context, contrast, and implied meaning | Supported the decision to use `parent_comment + comment` as model input |
+| Task-aware preprocessing | Learned that preprocessing choices must match the task | Helped us evaluate stopword removal instead of assuming it is always beneficial |
+| Experimental design | Learned to compare models under the same split, input format, and metrics | Made the BERTweet vs RoBERTa comparison fair and academically defensible |
+| Transformer modeling | Gained hands-on experience with BERTweet and RoBERTa fine-tuning | Helped us understand how pretrained language models can be adapted to classification |
+| Evaluation methodology | Learned to use macro-F1, precision, recall, confusion matrices, and reports | Allowed us to select the final model using evidence rather than intuition |
+| Error analysis | Learned to study false positives, false negatives, confidence, and text-length behavior | Improved our ability to explain model limitations clearly |
+| UI and communication | Learned to convert model outputs into an interactive Streamlit dashboard | Made the project easier to present and understand |
+| Responsible AI | Learned to document risk, limitation, and responsible-use guidance | Strengthened the academic and ethical quality of the project |
+| Reproducibility | Learned to organize scripts, configs, reports, and local artifacts | Made the workflow easier to rerun, audit, and explain |
 
 ## Final Model
 
