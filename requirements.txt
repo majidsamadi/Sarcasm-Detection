@@ -16,3 +16,4 @@ streamlit
 kagglehub[pandas-datasets]
 emoji
 regex
+seaborn
