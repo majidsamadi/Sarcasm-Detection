@@ -8,4 +8,4 @@ gatherUsageStats = false
 base = "light"
 
 [client]
-toolbarMode = "viewer"
+toolbarMode = "minimal"

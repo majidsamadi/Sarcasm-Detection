@@ -1,0 +1,1 @@
+Streamlit UI cleanup completed. The project-level Streamlit configuration was updated to use client.toolbarMode = "minimal", which hides the top-right three-dots app menu when no externally defined menu options remain. This provides a cleaner presentation-ready interface for the local demo and enhanced dashboard.
