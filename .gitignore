@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Large local data files - do not push datasets to GitHub
+data/raw/*
+data/processed/*
+data/splits/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/splits/.gitkeep
+!data/splits/versionA/
+!data/splits/versionA/.gitkeep
+!data/splits/versionB/
+!data/splits/versionB/.gitkeep
+
+# Model outputs - usually too large for GitHub
+models/*
+!models/.gitkeep
+*.pt
+*.pth
+*.bin
+*.safetensors
+checkpoint-*/
+
+# Reports generated locally
+reports/figures/*.png
+reports/figures/*.jpg
+reports/figures/*.pdf
+!reports/figures/.gitkeep

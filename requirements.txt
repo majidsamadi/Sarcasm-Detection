@@ -1,0 +1,15 @@
+pandas
+numpy
+scikit-learn
+matplotlib
+nltk
+torch
+transformers
+datasets
+accelerate
+evaluate
+jupyter
+ipykernel
+openpyxl
+tqdm
+streamlit
