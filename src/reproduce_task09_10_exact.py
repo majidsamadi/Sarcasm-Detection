@@ -57,7 +57,10 @@ def generate_A_exact() -> pd.DataFrame:
     print(f"Initial shape: {df.shape}")
 
     # Same as notebook Cell 17: creates word_count before cleaning.
-    df["word_count"] = df["comment"].astype(str).apply(lambda x: len(x.split()))
+    # Local pandas compatibility fix for the notebook line below.
+    # Original notebook logic: df["comment"].astype(str).apply(lambda x: len(x.split()))
+    # Null comments are dropped immediately after this step, so fillna("") does not change kept rows.
+    df["word_count"] = df["comment"].fillna("").astype(str).apply(lambda x: len(x.split()))
 
     # Same as notebook Cell 31.
     df = df.dropna(subset=["comment"])
