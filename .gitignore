@@ -84,3 +84,7 @@ models/final_model/
 models/*/
 reports/task18/local_only/
 repo_check.txt
+# Local data/model artifacts
+reports/task18/local_only/**
+reports/task20/local_only/**
+.streamlit/secrets.toml

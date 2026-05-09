@@ -1,11 +1,19 @@
-# Demo App
+# Task 20 Demo Interface
 
-The final demo app will be added after model comparison and final model selection.
+This folder contains the Streamlit demo for the sarcasm detection project.
 
-Expected final behavior:
-1. User enters social media text.
-2. The selected final model predicts sarcastic or non-sarcastic.
-3. The interface shows the predicted label and confidence score.
+The demo loads the selected final model from Task 19:
 
-Important limitation:
-This system is for academic demonstration only and should not be used to automatically punish, flag, or moderate user content.
+- Model: RoBERTa Version A
+- Local checkpoint: `models/roberta/versionA`
+- Preprocessing setting: Version A, stopwords kept
+- Input format: text-only input using `parent_comment + comment` when context is provided
+- Output: sarcastic or non-sarcastic prediction with confidence scores
+
+Run locally:
+
+```bash
+bash run_task20_demo.sh
+```
+
+Important: model checkpoints are local-only and are not pushed to GitHub.
