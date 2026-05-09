@@ -1,0 +1,184 @@
+{
+  "task": "Task 18 - Error Analysis",
+  "selected_experiment": {
+    "experiment_id": "E03_RoBERTa_VersionA",
+    "model_family": "RoBERTa",
+    "model_name": "roberta-base",
+    "checkpoint_dir": "models/roberta/versionA",
+    "dataset_version": "versionA",
+    "preprocessing": "Stopwords kept",
+    "test_split": "data/splits/versionA/test.csv",
+    "selection_basis": "Task 17 ranked this model highest by held-out test macro-F1."
+  },
+  "rows_evaluated": 96509,
+  "label_column": "label",
+  "text_columns_used": [
+    "parent_comment",
+    "comment"
+  ],
+  "metrics": {
+    "accuracy": 0.722285,
+    "macro_precision": 0.743013,
+    "macro_recall": 0.723086,
+    "macro_f1": 0.716698,
+    "weighted_f1": 0.716477
+  },
+  "confusion_matrix": {
+    "tn": 41630,
+    "fp": 6357,
+    "fn": 20445,
+    "tp": 28077
+  },
+  "error_counts": {
+    "Correct": 69707,
+    "False Negative": 20445,
+    "False Positive": 6357
+  },
+  "confidence_by_correctness": {
+    "<0.55": {
+      "False": 4305,
+      "True": 4834
+    },
+    "0.55-0.70": {
+      "False": 11490,
+      "True": 17639
+    },
+    "0.70-0.85": {
+      "False": 8438,
+      "True": 24586
+    },
+    ">=0.85": {
+      "False": 2569,
+      "True": 22648
+    }
+  },
+  "length_by_correctness": {
+    "0-20": {
+      "False": 10482,
+      "True": 24524
+    },
+    "21-50": {
+      "False": 12927,
+      "True": 34442
+    },
+    "51-100": {
+      "False": 3293,
+      "True": 10433
+    },
+    ">100": {
+      "False": 100,
+      "True": 308
+    }
+  },
+  "surface_feature_error_summary": {
+    "has_exclamation": {
+      "False": {
+        "total": 81369,
+        "correct": 58128,
+        "incorrect": 23241,
+        "error_rate": 0.285625
+      },
+      "True": {
+        "total": 15140,
+        "correct": 11579,
+        "incorrect": 3561,
+        "error_rate": 0.235205
+      }
+    },
+    "has_question": {
+      "False": {
+        "total": 65119,
+        "correct": 47488,
+        "incorrect": 17631,
+        "error_rate": 0.27075
+      },
+      "True": {
+        "total": 31390,
+        "correct": 22219,
+        "incorrect": 9171,
+        "error_rate": 0.292163
+      }
+    },
+    "has_ellipsis": {
+      "False": {
+        "total": 84049,
+        "correct": 60795,
+        "incorrect": 23254,
+        "error_rate": 0.276672
+      },
+      "True": {
+        "total": 12460,
+        "correct": 8912,
+        "incorrect": 3548,
+        "error_rate": 0.284751
+      }
+    },
+    "has_quote": {
+      "False": {
+        "total": 39649,
+        "correct": 28277,
+        "incorrect": 11372,
+        "error_rate": 0.286817
+      },
+      "True": {
+        "total": 56860,
+        "correct": 41430,
+        "incorrect": 15430,
+        "error_rate": 0.271368
+      }
+    },
+    "has_all_caps_word": {
+      "False": {
+        "total": 77314,
+        "correct": 55863,
+        "incorrect": 21451,
+        "error_rate": 0.277453
+      },
+      "True": {
+        "total": 19195,
+        "correct": 13844,
+        "incorrect": 5351,
+        "error_rate": 0.278771
+      }
+    },
+    "has_laughter": {
+      "False": {
+        "total": 94122,
+        "correct": 67956,
+        "incorrect": 26166,
+        "error_rate": 0.278001
+      },
+      "True": {
+        "total": 2387,
+        "correct": 1751,
+        "incorrect": 636,
+        "error_rate": 0.266443
+      }
+    },
+    "has_negation": {
+      "False": {
+        "total": 59244,
+        "correct": 42608,
+        "incorrect": 16636,
+        "error_rate": 0.280805
+      },
+      "True": {
+        "total": 37265,
+        "correct": 27099,
+        "incorrect": 10166,
+        "error_rate": 0.272803
+      }
+    }
+  },
+  "observations": [
+    "The selected model made 26,802 errors out of 96,509 evaluated test examples, giving an error rate of 0.2777.",
+    "False positives: 6,357; false negatives: 20,445. This shows whether the model is more likely to over-detect or miss sarcasm.",
+    "False negatives are higher than false positives, so the model is more likely to miss sarcastic comments.",
+    "There are 2,569 high-confidence errors with confidence >= 0.85. These are useful for qualitative review because the model was confident but wrong."
+  ],
+  "local_files_not_committed": {
+    "false_positives": "reports/task18/error_samples/high_confidence_false_positives.local.csv",
+    "false_negatives": "reports/task18/error_samples/high_confidence_false_negatives.local.csv",
+    "predictions": "reports/task18/predictions/task18_predictions.local.csv"
+  }
+}

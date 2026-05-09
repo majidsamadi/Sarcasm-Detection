@@ -74,3 +74,9 @@ models/roberta/
 reports/task15/predictions/
 reports/task15/*.csv
 reports/task15/predictions/*.csv
+reports/task18/error_samples/*.csv
+reports/task18/predictions/*.csv
+reports/task18/*.local.csv
+reports/task18/*.predictions.csv
+reports/task18/*.error_samples.csv
+data/**/*.csv

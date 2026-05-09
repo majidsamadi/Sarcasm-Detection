@@ -1,0 +1,40 @@
+{
+  "task": "Task 18 - Error Analysis",
+  "project": "Sarcasm Detection from Social Media Text using SARC",
+  "selected_experiment": {
+    "experiment_id": "E03_RoBERTa_VersionA",
+    "model_family": "RoBERTa",
+    "model_name": "roberta-base",
+    "checkpoint_dir": "models/roberta/versionA",
+    "dataset_version": "versionA",
+    "preprocessing": "Stopwords kept",
+    "test_split": "data/splits/versionA/test.csv",
+    "selection_basis": "Task 17 ranked this model highest by held-out test macro-F1."
+  },
+  "input_format": {
+    "text_columns": ["parent_comment", "comment"],
+    "separator": " </s> ",
+    "label_column_candidates": ["label", "Label", "is_sarcastic", "class", "target"]
+  },
+  "inference": {
+    "max_length": 128,
+    "batch_size": 16,
+    "device_preference": "auto"
+  },
+  "analysis": {
+    "main_metric": "macro_f1",
+    "confidence_bins": [0.0, 0.55, 0.70, 0.85, 1.01],
+    "length_bins": [0, 20, 50, 100, 100000],
+    "save_local_error_examples": true,
+    "num_examples_per_error_type": 25,
+    "commit_raw_text_examples_to_github": false
+  },
+  "outputs": {
+    "report_markdown": "reports/task18/task18_error_analysis_summary.md",
+    "report_json": "reports/task18/task18_error_analysis_summary.json",
+    "progress_note": "reports/task18/task18_progress_note.txt",
+    "figures_dir": "reports/task18/figures",
+    "local_error_samples_dir": "reports/task18/error_samples",
+    "local_predictions_dir": "reports/task18/predictions"
+  }
+}
