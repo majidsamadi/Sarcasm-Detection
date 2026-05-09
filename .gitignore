@@ -61,3 +61,8 @@ models/**/checkpoint-*
 *.log
 # Local dataset and split files - keep local, do not push
 models/**
+models/
+logs/
+reports/task13/*.tmp
+*.ckpt
+models/bertweet/

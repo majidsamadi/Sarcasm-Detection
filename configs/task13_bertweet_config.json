@@ -1,0 +1,42 @@
+{
+  "task": "Task 13 - Train BERTweet",
+  "model_name": "vinai/bertweet-base",
+  "text_input_strategy": "Use parent_comment + comment when both columns exist; otherwise use the available text/comment column.",
+  "label_meaning": {
+    "0": "non-sarcastic",
+    "1": "sarcastic"
+  },
+  "experiments": [
+    {
+      "experiment_id": "E01_BERTweet_VersionA",
+      "dataset_version": "versionA",
+      "preprocessing": "Version A - stopwords kept",
+      "train_path": "data/splits/versionA/train.csv",
+      "valid_path": "data/splits/versionA/valid.csv",
+      "output_dir": "models/bertweet/versionA",
+      "metrics_path": "reports/task13/E01_BERTweet_VersionA_metrics.json"
+    },
+    {
+      "experiment_id": "E02_BERTweet_VersionB",
+      "dataset_version": "versionB",
+      "preprocessing": "Version B - selective stopword removal, negations kept",
+      "train_path": "data/splits/versionB/train.csv",
+      "valid_path": "data/splits/versionB/valid.csv",
+      "output_dir": "models/bertweet/versionB",
+      "metrics_path": "reports/task13/E02_BERTweet_VersionB_metrics.json"
+    }
+  ],
+  "training": {
+    "epochs": 1,
+    "batch_size": 8,
+    "gradient_accumulation_steps": 4,
+    "learning_rate": 0.00002,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 128,
+    "random_seed": 42,
+    "log_every": 100,
+    "max_train_samples": 50000,
+    "max_valid_samples": 10000
+  }
+}

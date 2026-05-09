@@ -1,0 +1,1 @@
+BERTweet training completed for Version A and Version B using the controlled experiment design. Both runs used the same split, text-only input, max length 128, and identical training settings. Validation metrics and local checkpoints were saved under reports/task13 and models/bertweet.

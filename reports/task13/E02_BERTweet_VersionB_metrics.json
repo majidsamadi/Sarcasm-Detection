@@ -1,0 +1,117 @@
+{
+  "experiment_id": "E02_BERTweet_VersionB",
+  "dataset_version": "versionB",
+  "preprocessing": "Version B - selective stopword removal, negations kept",
+  "model_name": "vinai/bertweet-base",
+  "device": "mps",
+  "train_rows_used": 50000,
+  "valid_rows_used": 10000,
+  "max_length": 128,
+  "epochs": 1,
+  "batch_size": 8,
+  "gradient_accumulation_steps": 4,
+  "learning_rate": 2e-05,
+  "weight_decay": 0.01,
+  "warmup_ratio": 0.1,
+  "train_info": {
+    "csv_path": "/Users/samadi/Master AI/NLP/Sarcasm-Detection/data/splits/versionB/train.csv",
+    "original_columns": [
+      "row_id",
+      "parent_comment",
+      "comment",
+      "label",
+      "model_text"
+    ],
+    "clean_columns": [
+      "row_id",
+      "parent_comment",
+      "comment",
+      "label",
+      "model_text"
+    ],
+    "label_column_used": "label",
+    "rows_loaded": 772069,
+    "rows_after_cleaning": 772069,
+    "rows_used": 50000,
+    "label_distribution_used": {
+      "0": 24862,
+      "1": 25138
+    }
+  },
+  "valid_info": {
+    "csv_path": "/Users/samadi/Master AI/NLP/Sarcasm-Detection/data/splits/versionB/valid.csv",
+    "original_columns": [
+      "row_id",
+      "parent_comment",
+      "comment",
+      "label",
+      "model_text"
+    ],
+    "clean_columns": [
+      "row_id",
+      "parent_comment",
+      "comment",
+      "label",
+      "model_text"
+    ],
+    "label_column_used": "label",
+    "rows_loaded": 96509,
+    "rows_after_cleaning": 96509,
+    "rows_used": 10000,
+    "label_distribution_used": {
+      "0": 4972,
+      "1": 5028
+    }
+  },
+  "training_history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.5846932902741432,
+      "valid_loss": 0.5407826574325562,
+      "valid_accuracy": 0.7267,
+      "valid_macro_f1": 0.7264746999455982,
+      "valid_weighted_f1": 0.7264307389593735
+    }
+  ],
+  "validation_metrics": {
+    "accuracy": 0.7267,
+    "macro_precision": 0.7277804606483131,
+    "macro_recall": 0.7268835150670325,
+    "macro_f1": 0.7264746999455982,
+    "weighted_precision": 0.7278765015948299,
+    "weighted_recall": 0.7267,
+    "weighted_f1": 0.7264307389593735,
+    "class_metrics": {
+      "0_non_sarcastic": {
+        "precision": 0.7106302916274694,
+        "recall": 0.7596540627514079,
+        "f1": 0.7343248760571596,
+        "support": 4972
+      },
+      "1_sarcastic": {
+        "precision": 0.7449306296691569,
+        "recall": 0.6941129673826572,
+        "f1": 0.7186245238340369,
+        "support": 5028
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "0_non_sarcastic",
+        "1_sarcastic"
+      ],
+      "matrix": [
+        [
+          3777,
+          1195
+        ],
+        [
+          1538,
+          3490
+        ]
+      ]
+    }
+  },
+  "best_checkpoint_local_path": "/Users/samadi/Master AI/NLP/Sarcasm-Detection/models/bertweet/versionB",
+  "elapsed_seconds": 2573.4827451705933
+}
