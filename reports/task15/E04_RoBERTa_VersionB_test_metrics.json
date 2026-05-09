@@ -1,0 +1,56 @@
+{
+  "experiment_id": "E04_RoBERTa_VersionB",
+  "short_id": "E04",
+  "model_family": "RoBERTa",
+  "dataset_version": "versionB",
+  "preprocessing": "Version B - stopwords selectively removed",
+  "checkpoint_dir": "models/roberta/versionB",
+  "test_path": "data/splits/versionB/test.csv",
+  "rows_evaluated": 96509,
+  "max_test_samples": null,
+  "max_length": 128,
+  "batch_size": 16,
+  "device": "mps",
+  "label_column": "label",
+  "text_columns_used": [
+    "parent_comment",
+    "comment"
+  ],
+  "metrics": {
+    "accuracy": 0.6772632604213079,
+    "macro_precision": 0.7105745415737303,
+    "macro_recall": 0.678353074216452,
+    "macro_f1": 0.6647991220259012,
+    "weighted_precision": 0.7110465727064689,
+    "weighted_recall": 0.6772632604213079,
+    "weighted_f1": 0.6644408031628414,
+    "confusion_matrix": [
+      [
+        41986,
+        6001
+      ],
+      [
+        25146,
+        23376
+      ]
+    ],
+    "per_class": {
+      "0_non_sarcastic": {
+        "precision": 0.6254245367335994,
+        "recall": 0.8749452976847897,
+        "f1": 0.7294364961474648,
+        "support": 47987
+      },
+      "1_sarcastic": {
+        "precision": 0.7957245464138611,
+        "recall": 0.48176085074811426,
+        "f1": 0.6001617479043376,
+        "support": 48522
+      }
+    },
+    "probability_summary": {
+      "sarcastic_probability_mean": 0.4352024495601654,
+      "sarcastic_probability_std": 0.21934659779071808
+    }
+  }
+}

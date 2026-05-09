@@ -1,0 +1,1 @@
+Model evaluation completed for all four experiments on the held-out test split. Accuracy, macro precision, macro recall, macro-F1, weighted-F1, per-class metrics, classification reports, and confusion matrices were generated. Results were saved under reports/task15, and the best model was selected based mainly on test macro-F1.

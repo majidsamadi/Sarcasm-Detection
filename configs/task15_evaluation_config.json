@@ -1,0 +1,58 @@
+{
+  "project": "Sarcasm Detection in Social Media Text using BERTweet and RoBERTa",
+  "task": "Task 15 - Model Evaluation",
+  "random_seed": 42,
+  "max_length": 128,
+  "batch_size": 16,
+  "labels": {
+    "0": "non-sarcastic",
+    "1": "sarcastic"
+  },
+  "text_input": {
+    "primary_column": "comment",
+    "context_column": "parent_comment",
+    "joiner": " </s> "
+  },
+  "experiments": [
+    {
+      "id": "E01_BERTweet_VersionA",
+      "short_id": "E01",
+      "model_family": "BERTweet",
+      "tokenizer_name": "vinai/bertweet-base",
+      "checkpoint_dir": "models/bertweet/versionA",
+      "dataset_version": "versionA",
+      "test_path": "data/splits/versionA/test.csv",
+      "preprocessing": "Version A - stopwords kept"
+    },
+    {
+      "id": "E02_BERTweet_VersionB",
+      "short_id": "E02",
+      "model_family": "BERTweet",
+      "tokenizer_name": "vinai/bertweet-base",
+      "checkpoint_dir": "models/bertweet/versionB",
+      "dataset_version": "versionB",
+      "test_path": "data/splits/versionB/test.csv",
+      "preprocessing": "Version B - stopwords selectively removed"
+    },
+    {
+      "id": "E03_RoBERTa_VersionA",
+      "short_id": "E03",
+      "model_family": "RoBERTa",
+      "tokenizer_name": "roberta-base",
+      "checkpoint_dir": "models/roberta/versionA",
+      "dataset_version": "versionA",
+      "test_path": "data/splits/versionA/test.csv",
+      "preprocessing": "Version A - stopwords kept"
+    },
+    {
+      "id": "E04_RoBERTa_VersionB",
+      "short_id": "E04",
+      "model_family": "RoBERTa",
+      "tokenizer_name": "roberta-base",
+      "checkpoint_dir": "models/roberta/versionB",
+      "dataset_version": "versionB",
+      "test_path": "data/splits/versionB/test.csv",
+      "preprocessing": "Version B - stopwords selectively removed"
+    }
+  ]
+}

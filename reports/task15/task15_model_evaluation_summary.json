@@ -1,0 +1,235 @@
+{
+  "task": "Task 15 - Model Evaluation",
+  "evaluation_scope": "full test set",
+  "best_experiment": "E03_RoBERTa_VersionA",
+  "best_model_family": "RoBERTa",
+  "best_dataset_version": "versionA",
+  "best_macro_f1": 0.7166978860458602,
+  "best_accuracy": 0.722284968241304,
+  "results": [
+    {
+      "experiment_id": "E01_BERTweet_VersionA",
+      "short_id": "E01",
+      "model_family": "BERTweet",
+      "dataset_version": "versionA",
+      "preprocessing": "Version A - stopwords kept",
+      "checkpoint_dir": "models/bertweet/versionA",
+      "test_path": "data/splits/versionA/test.csv",
+      "rows_evaluated": 96509,
+      "max_test_samples": null,
+      "max_length": 128,
+      "batch_size": 16,
+      "device": "mps",
+      "label_column": "label",
+      "text_columns_used": [
+        "parent_comment",
+        "comment"
+      ],
+      "metrics": {
+        "accuracy": 0.5091649483467863,
+        "macro_precision": 0.6637904226416149,
+        "macro_recall": 0.5118350599513822,
+        "macro_f1": 0.3631522089668446,
+        "weighted_precision": 0.6646803462487423,
+        "weighted_recall": 0.5091649483467863,
+        "weighted_f1": 0.36146177128819085,
+        "confusion_matrix": [
+          [
+            47675,
+            312
+          ],
+          [
+            47058,
+            1464
+          ]
+        ],
+        "per_class": {
+          "0_non_sarcastic": {
+            "precision": 0.5032565209589056,
+            "recall": 0.9934982391064247,
+            "f1": 0.6680913677130045,
+            "support": 47987
+          },
+          "1_sarcastic": {
+            "precision": 0.8243243243243243,
+            "recall": 0.030171880796339805,
+            "f1": 0.058213050220684716,
+            "support": 48522
+          }
+        },
+        "probability_summary": {
+          "sarcastic_probability_mean": 0.28482571244239807,
+          "sarcastic_probability_std": 0.08572544902563095
+        }
+      }
+    },
+    {
+      "experiment_id": "E02_BERTweet_VersionB",
+      "short_id": "E02",
+      "model_family": "BERTweet",
+      "dataset_version": "versionB",
+      "preprocessing": "Version B - stopwords selectively removed",
+      "checkpoint_dir": "models/bertweet/versionB",
+      "test_path": "data/splits/versionB/test.csv",
+      "rows_evaluated": 96509,
+      "max_test_samples": null,
+      "max_length": 128,
+      "batch_size": 16,
+      "device": "mps",
+      "label_column": "label",
+      "text_columns_used": [
+        "parent_comment",
+        "comment"
+      ],
+      "metrics": {
+        "accuracy": 0.5018288449781886,
+        "macro_precision": 0.6402686542531336,
+        "macro_recall": 0.5045553691981279,
+        "macro_f1": 0.34523313940821915,
+        "weighted_precision": 0.6410488720786884,
+        "weighted_recall": 0.5018288449781886,
+        "weighted_f1": 0.3434580540748307,
+        "confusion_matrix": [
+          [
+            47814,
+            173
+          ],
+          [
+            47905,
+            617
+          ]
+        ],
+        "per_class": {
+          "0_non_sarcastic": {
+            "precision": 0.49952465027841914,
+            "recall": 0.9963948569404214,
+            "f1": 0.6654419439689366,
+            "support": 47987
+          },
+          "1_sarcastic": {
+            "precision": 0.7810126582278482,
+            "recall": 0.012715881455834467,
+            "f1": 0.025024334847501623,
+            "support": 48522
+          }
+        },
+        "probability_summary": {
+          "sarcastic_probability_mean": 0.2553337514400482,
+          "sarcastic_probability_std": 0.08403023332357407
+        }
+      }
+    },
+    {
+      "experiment_id": "E03_RoBERTa_VersionA",
+      "short_id": "E03",
+      "model_family": "RoBERTa",
+      "dataset_version": "versionA",
+      "preprocessing": "Version A - stopwords kept",
+      "checkpoint_dir": "models/roberta/versionA",
+      "test_path": "data/splits/versionA/test.csv",
+      "rows_evaluated": 96509,
+      "max_test_samples": null,
+      "max_length": 128,
+      "batch_size": 16,
+      "device": "mps",
+      "label_column": "label",
+      "text_columns_used": [
+        "parent_comment",
+        "comment"
+      ],
+      "metrics": {
+        "accuracy": 0.722284968241304,
+        "macro_precision": 0.7430131550757031,
+        "macro_recall": 0.7230856801312752,
+        "macro_f1": 0.7166978860458602,
+        "weighted_precision": 0.7434143554648498,
+        "weighted_recall": 0.722284968241304,
+        "weighted_f1": 0.7164773379034147,
+        "confusion_matrix": [
+          [
+            41630,
+            6357
+          ],
+          [
+            20445,
+            28077
+          ]
+        ],
+        "per_class": {
+          "0_non_sarcastic": {
+            "precision": 0.6706403544099879,
+            "recall": 0.8675266217934023,
+            "f1": 0.7564827097454162,
+            "support": 47987
+          },
+          "1_sarcastic": {
+            "precision": 0.8153859557414184,
+            "recall": 0.578644738469148,
+            "f1": 0.6769130623463041,
+            "support": 48522
+          }
+        },
+        "probability_summary": {
+          "sarcastic_probability_mean": 0.4355306327342987,
+          "sarcastic_probability_std": 0.2700364589691162
+        }
+      }
+    },
+    {
+      "experiment_id": "E04_RoBERTa_VersionB",
+      "short_id": "E04",
+      "model_family": "RoBERTa",
+      "dataset_version": "versionB",
+      "preprocessing": "Version B - stopwords selectively removed",
+      "checkpoint_dir": "models/roberta/versionB",
+      "test_path": "data/splits/versionB/test.csv",
+      "rows_evaluated": 96509,
+      "max_test_samples": null,
+      "max_length": 128,
+      "batch_size": 16,
+      "device": "mps",
+      "label_column": "label",
+      "text_columns_used": [
+        "parent_comment",
+        "comment"
+      ],
+      "metrics": {
+        "accuracy": 0.6772632604213079,
+        "macro_precision": 0.7105745415737303,
+        "macro_recall": 0.678353074216452,
+        "macro_f1": 0.6647991220259012,
+        "weighted_precision": 0.7110465727064689,
+        "weighted_recall": 0.6772632604213079,
+        "weighted_f1": 0.6644408031628414,
+        "confusion_matrix": [
+          [
+            41986,
+            6001
+          ],
+          [
+            25146,
+            23376
+          ]
+        ],
+        "per_class": {
+          "0_non_sarcastic": {
+            "precision": 0.6254245367335994,
+            "recall": 0.8749452976847897,
+            "f1": 0.7294364961474648,
+            "support": 47987
+          },
+          "1_sarcastic": {
+            "precision": 0.7957245464138611,
+            "recall": 0.48176085074811426,
+            "f1": 0.6001617479043376,
+            "support": 48522
+          }
+        },
+        "probability_summary": {
+          "sarcastic_probability_mean": 0.4352024495601654,
+          "sarcastic_probability_std": 0.21934659779071808
+        }
+      }
+    }
+  ]
+}

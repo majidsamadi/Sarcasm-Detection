@@ -1,0 +1,56 @@
+{
+  "experiment_id": "E02_BERTweet_VersionB",
+  "short_id": "E02",
+  "model_family": "BERTweet",
+  "dataset_version": "versionB",
+  "preprocessing": "Version B - stopwords selectively removed",
+  "checkpoint_dir": "models/bertweet/versionB",
+  "test_path": "data/splits/versionB/test.csv",
+  "rows_evaluated": 96509,
+  "max_test_samples": null,
+  "max_length": 128,
+  "batch_size": 16,
+  "device": "mps",
+  "label_column": "label",
+  "text_columns_used": [
+    "parent_comment",
+    "comment"
+  ],
+  "metrics": {
+    "accuracy": 0.5018288449781886,
+    "macro_precision": 0.6402686542531336,
+    "macro_recall": 0.5045553691981279,
+    "macro_f1": 0.34523313940821915,
+    "weighted_precision": 0.6410488720786884,
+    "weighted_recall": 0.5018288449781886,
+    "weighted_f1": 0.3434580540748307,
+    "confusion_matrix": [
+      [
+        47814,
+        173
+      ],
+      [
+        47905,
+        617
+      ]
+    ],
+    "per_class": {
+      "0_non_sarcastic": {
+        "precision": 0.49952465027841914,
+        "recall": 0.9963948569404214,
+        "f1": 0.6654419439689366,
+        "support": 47987
+      },
+      "1_sarcastic": {
+        "precision": 0.7810126582278482,
+        "recall": 0.012715881455834467,
+        "f1": 0.025024334847501623,
+        "support": 48522
+      }
+    },
+    "probability_summary": {
+      "sarcastic_probability_mean": 0.2553337514400482,
+      "sarcastic_probability_std": 0.08403023332357407
+    }
+  }
+}

@@ -70,3 +70,7 @@ models/bertweet/
 # Local trained model checkpoints
 models/roberta/
 # macOS artifacts
+*.DS_Store
+reports/task15/predictions/
+reports/task15/*.csv
+reports/task15/predictions/*.csv
