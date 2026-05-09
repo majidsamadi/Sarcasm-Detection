@@ -5,6 +5,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
 PROCESSED_DIR = DATA_DIR / "processed"
 SPLITS_DIR = DATA_DIR / "splits"
+REPORTS_DIR = PROJECT_ROOT / "reports"
 
 VERSION_A_FILE = PROCESSED_DIR / "A.csv"
 VERSION_B_FILE = PROCESSED_DIR / "B.csv"

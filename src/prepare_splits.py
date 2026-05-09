@@ -1,18 +1,18 @@
 """
 Task 11: Train/Validation/Test Split
 
-This script creates fair stratified train/validation/test splits for:
-- Version A: stopwords kept
-- Version B: selective stopword removal
+Academic goal:
+- Create a fair 80/10/10 train/validation/test split.
+- Preserve class balance using stratified splitting.
+- Use the same row indices for Version A and Version B.
+- Version A = stopwords kept.
+- Version B = selective stopword removal.
 
-Important academic rule:
-The same row indices are used for Version A and Version B so that the model comparison is fair.
-
-Expected input files:
+Inputs:
     data/processed/A.csv
     data/processed/B.csv
 
-Output:
+Outputs:
     data/splits/versionA/train.csv
     data/splits/versionA/valid.csv
     data/splits/versionA/test.csv
@@ -20,6 +20,8 @@ Output:
     data/splits/versionB/valid.csv
     data/splits/versionB/test.csv
     data/splits/split_summary.json
+    reports/task11_split_summary.md
+    reports/task11_progress_note.txt
 """
 
 from __future__ import annotations
@@ -39,6 +41,7 @@ from config import (
     LABEL_CANDIDATES,
     PROJECT_ROOT,
     RANDOM_SEED,
+    REPORTS_DIR,
     SPLITS_DIR,
     TEST_SIZE,
     TEXT_CANDIDATES,
@@ -49,7 +52,6 @@ from config import (
 
 
 def normalize_spaces(text: object) -> str:
-    """Convert to string and collapse repeated whitespace."""
     if pd.isna(text):
         return ""
     return re.sub(r"\s+", " ", str(text)).strip()
@@ -82,10 +84,10 @@ def infer_context_column(df: pd.DataFrame) -> str | None:
 
 def add_model_text(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Add a model_text column.
+    Add model_text column.
 
-    If parent_comment exists, we combine it with comment because sarcasm often depends on context.
-    This still uses text-only input, not metadata.
+    If parent_comment exists, combine parent_comment + comment.
+    This is still text-only input and is useful because sarcasm often depends on context.
     """
     df = df.copy()
     comment_col = infer_comment_column(df)
@@ -102,14 +104,6 @@ def add_model_text(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def validate_same_rows(df_a: pd.DataFrame, df_b: pd.DataFrame) -> None:
-    if len(df_a) != len(df_b):
-        raise ValueError(
-            f"Version A and Version B must have the same number of rows. "
-            f"A={len(df_a)}, B={len(df_b)}"
-        )
-
-
 def load_versions(version_a_path: Path, version_b_path: Path) -> tuple[pd.DataFrame, pd.DataFrame, str]:
     if not version_a_path.exists():
         raise FileNotFoundError(f"Version A file not found: {version_a_path}")
@@ -118,10 +112,17 @@ def load_versions(version_a_path: Path, version_b_path: Path) -> tuple[pd.DataFr
 
     print(f"Loading Version A: {version_a_path}")
     df_a = pd.read_csv(version_a_path)
+    print(f"Version A shape: {df_a.shape}")
+
     print(f"Loading Version B: {version_b_path}")
     df_b = pd.read_csv(version_b_path)
+    print(f"Version B shape: {df_b.shape}")
 
-    validate_same_rows(df_a, df_b)
+    if len(df_a) != len(df_b):
+        raise ValueError(
+            "Version A and Version B must have the same number of rows for fair comparison. "
+            f"A={len(df_a)}, B={len(df_b)}"
+        )
 
     label_col = infer_label_column(df_a)
     if label_col not in df_b.columns:
@@ -130,7 +131,6 @@ def load_versions(version_a_path: Path, version_b_path: Path) -> tuple[pd.DataFr
     df_a = add_model_text(df_a)
     df_b = add_model_text(df_b)
 
-    # Keep only rows where both versions still have usable model text and label.
     valid_mask = (
         df_a["model_text"].astype(str).str.len().gt(0)
         & df_b["model_text"].astype(str).str.len().gt(0)
@@ -140,16 +140,19 @@ def load_versions(version_a_path: Path, version_b_path: Path) -> tuple[pd.DataFr
 
     removed = int((~valid_mask).sum())
     if removed > 0:
-        print(f"Removing {removed} rows with empty model_text or missing labels after final validation.")
+        print(f"Removing {removed:,} rows with empty model_text or missing labels after final validation.")
 
     df_a = df_a.loc[valid_mask].reset_index(drop=True)
     df_b = df_b.loc[valid_mask].reset_index(drop=True)
 
-    # Ensure labels match by row after filtering.
     if not df_a[label_col].reset_index(drop=True).equals(df_b[label_col].reset_index(drop=True)):
-        raise ValueError("Labels in Version A and Version B do not match by row.")
+        raise ValueError("Labels in Version A and Version B do not match by row after filtering.")
+
+    df_a.insert(0, "row_id", np.arange(len(df_a)))
+    df_b.insert(0, "row_id", np.arange(len(df_b)))
 
     print(f"Final aligned rows: {len(df_a):,}")
+    print(f"Label column: {label_col}")
     return df_a, df_b, label_col
 
 
@@ -159,12 +162,6 @@ def create_stratified_indices(
     validation_size: float,
     seed: int,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """
-    Create train/valid/test indices.
-
-    validation_size and test_size are expressed as fractions of the full dataset.
-    Example: validation_size=0.10 and test_size=0.10 gives 80/10/10 split.
-    """
     indices = np.arange(len(labels))
     y = labels.to_numpy()
 
@@ -190,6 +187,7 @@ def create_stratified_indices(
 
 def save_split_files(
     df: pd.DataFrame,
+    label_col: str,
     split_dir: Path,
     train_idx: np.ndarray,
     valid_idx: np.ndarray,
@@ -197,62 +195,129 @@ def save_split_files(
 ) -> dict:
     split_dir.mkdir(parents=True, exist_ok=True)
 
-    splits = {
-        "train": df.iloc[train_idx].reset_index(drop=True),
-        "valid": df.iloc[valid_idx].reset_index(drop=True),
-        "test": df.iloc[test_idx].reset_index(drop=True),
+    split_map = {
+        "train": train_idx,
+        "valid": valid_idx,
+        "test": test_idx,
     }
 
-    summary = {}
-    for split_name, split_df in splits.items():
+    summary: dict = {}
+
+    for split_name, split_idx in split_map.items():
+        split_df = df.iloc[split_idx].reset_index(drop=True)
         output_path = split_dir / f"{split_name}.csv"
         split_df.to_csv(output_path, index=False)
-        summary[split_name] = {
-            "rows": int(len(split_df)),
-        }
-        print(f"Saved {output_path} ({len(split_df):,} rows)")
 
-    return summary
-
-
-def add_distribution_to_summary(summary: dict, df: pd.DataFrame, label_col: str, split_dir: Path) -> dict:
-    distribution_rows = []
-    for split_name in ["train", "valid", "test"]:
-        split_path = split_dir / f"{split_name}.csv"
-        split_df = pd.read_csv(split_path)
         counts = split_df[label_col].value_counts().sort_index()
         percentages = split_df[label_col].value_counts(normalize=True).sort_index() * 100
 
-        summary[split_name]["label_distribution"] = {
-            str(label): {
-                "count": int(counts[label]),
-                "percentage": round(float(percentages[label]), 4),
-            }
-            for label in counts.index
+        summary[split_name] = {
+            "rows": int(len(split_df)),
+            "label_distribution": {
+                str(label): {
+                    "count": int(counts[label]),
+                    "percentage": round(float(percentages[label]), 4),
+                }
+                for label in counts.index
+            },
         }
 
-        for label in counts.index:
+        print(f"Saved {output_path} ({len(split_df):,} rows)")
+
+    distribution_rows = []
+    for split_name, details in summary.items():
+        for label, label_info in details["label_distribution"].items():
             distribution_rows.append(
                 {
                     "split": split_name,
                     "label": label,
-                    "count": int(counts[label]),
-                    "percentage": round(float(percentages[label]), 4),
+                    "count": label_info["count"],
+                    "percentage": label_info["percentage"],
                 }
             )
-
     pd.DataFrame(distribution_rows).to_csv(split_dir / "label_distribution.csv", index=False)
+
     return summary
+
+
+def make_markdown_report(summary: dict) -> str:
+    lines = []
+    lines.append("# Task 11: Train/Validation/Test Split Summary")
+    lines.append("")
+    lines.append("## Purpose")
+    lines.append("")
+    lines.append(
+        "Task 11 creates a fair stratified train/validation/test split for both preprocessing versions. "
+        "The same row indices are used for Version A and Version B so that later model comparison is academically fair."
+    )
+    lines.append("")
+    lines.append("## Split Configuration")
+    lines.append("")
+    lines.append(f"- Random seed: `{summary['seed']}`")
+    lines.append(f"- Label column: `{summary['label_column']}`")
+    lines.append(f"- Train ratio: `{summary['split_ratio']['train']}`")
+    lines.append(f"- Validation ratio: `{summary['split_ratio']['valid']}`")
+    lines.append(f"- Test ratio: `{summary['split_ratio']['test']}`")
+    lines.append("")
+    lines.append("## Version A: Stopwords Kept")
+    lines.append("")
+    lines.append("| Split | Rows | Label Distribution |")
+    lines.append("|---|---:|---|")
+    for split_name in ["train", "valid", "test"]:
+        details = summary["versionA"][split_name]
+        dist = ", ".join(
+            f"{label}: {info['count']} ({info['percentage']}%)"
+            for label, info in details["label_distribution"].items()
+        )
+        lines.append(f"| {split_name} | {details['rows']} | {dist} |")
+    lines.append("")
+    lines.append("## Version B: Selective Stopword Removal")
+    lines.append("")
+    lines.append("| Split | Rows | Label Distribution |")
+    lines.append("|---|---:|---|")
+    for split_name in ["train", "valid", "test"]:
+        details = summary["versionB"][split_name]
+        dist = ", ".join(
+            f"{label}: {info['count']} ({info['percentage']}%)"
+            for label, info in details["label_distribution"].items()
+        )
+        lines.append(f"| {split_name} | {details['rows']} | {dist} |")
+    lines.append("")
+    lines.append("## Academic Note")
+    lines.append("")
+    lines.append(
+        "The split is stratified, so the sarcastic and non-sarcastic label balance is preserved across train, validation, and test sets. "
+        "This supports fair comparison between BERTweet and RoBERTa and fair comparison between stopword-kept and stopword-removed preprocessing."
+    )
+    lines.append("")
+    return "\n".join(lines)
+
+
+def write_reports(summary: dict) -> None:
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+
+    report_path = REPORTS_DIR / "task11_split_summary.md"
+    report_path.write_text(make_markdown_report(summary), encoding="utf-8")
+    print(f"Saved report: {report_path}")
+
+    progress_note = (
+        "Train/validation/test split completed for Version A and Version B using the same stratified 80/10/10 split "
+        "with random seed 42. Class balance was preserved across splits, outputs were saved under data/splits/versionA "
+        "and data/splits/versionB, and the split summary was documented in reports/task11_split_summary.md."
+    )
+    progress_path = REPORTS_DIR / "task11_progress_note.txt"
+    progress_path.write_text(progress_note, encoding="utf-8")
+    print(f"Saved progress note: {progress_path}")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Create Task 11 train/validation/test splits.")
-    parser.add_argument("--version-a", type=Path, default=VERSION_A_FILE, help="Path to Version A CSV")
-    parser.add_argument("--version-b", type=Path, default=VERSION_B_FILE, help="Path to Version B CSV")
-    parser.add_argument("--output-dir", type=Path, default=SPLITS_DIR, help="Output directory for splits")
-    parser.add_argument("--test-size", type=float, default=TEST_SIZE, help="Test size fraction")
-    parser.add_argument("--validation-size", type=float, default=VALIDATION_SIZE, help="Validation size fraction")
-    parser.add_argument("--seed", type=int, default=RANDOM_SEED, help="Random seed")
+    parser.add_argument("--version-a", type=Path, default=VERSION_A_FILE)
+    parser.add_argument("--version-b", type=Path, default=VERSION_B_FILE)
+    parser.add_argument("--output-dir", type=Path, default=SPLITS_DIR)
+    parser.add_argument("--test-size", type=float, default=TEST_SIZE)
+    parser.add_argument("--validation-size", type=float, default=VALIDATION_SIZE)
+    parser.add_argument("--seed", type=int, default=RANDOM_SEED)
     return parser.parse_args()
 
 
@@ -262,8 +327,10 @@ def main() -> None:
     print("Task 11: Train/Validation/Test Split")
     print(f"Project root: {PROJECT_ROOT}")
     print(f"Random seed: {args.seed}")
-    print(f"Split ratio: train={1 - args.test_size - args.validation_size:.2f}, "
-          f"valid={args.validation_size:.2f}, test={args.test_size:.2f}")
+    print(
+        f"Split ratio: train={1 - args.test_size - args.validation_size:.2f}, "
+        f"valid={args.validation_size:.2f}, test={args.test_size:.2f}"
+    )
 
     df_a, df_b, label_col = load_versions(args.version_a, args.version_b)
 
@@ -273,9 +340,6 @@ def main() -> None:
         validation_size=args.validation_size,
         seed=args.seed,
     )
-
-    version_a_dir = args.output_dir / "versionA"
-    version_b_dir = args.output_dir / "versionB"
 
     summary = {
         "task": "Task 11 - Train/Validation/Test Split",
@@ -291,18 +355,21 @@ def main() -> None:
     }
 
     print("\nSaving Version A splits...")
-    summary["versionA"] = save_split_files(df_a, version_a_dir, train_idx, valid_idx, test_idx)
-    summary["versionA"] = add_distribution_to_summary(summary["versionA"], df_a, label_col, version_a_dir)
+    summary["versionA"] = save_split_files(
+        df_a, label_col, args.output_dir / "versionA", train_idx, valid_idx, test_idx
+    )
 
     print("\nSaving Version B splits...")
-    summary["versionB"] = save_split_files(df_b, version_b_dir, train_idx, valid_idx, test_idx)
-    summary["versionB"] = add_distribution_to_summary(summary["versionB"], df_b, label_col, version_b_dir)
+    summary["versionB"] = save_split_files(
+        df_b, label_col, args.output_dir / "versionB", train_idx, valid_idx, test_idx
+    )
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     summary_path = args.output_dir / "split_summary.json"
     summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    print(f"\nSaved summary: {summary_path}")
+    print(f"\nSaved summary JSON: {summary_path}")
 
+    write_reports(summary)
     print("\nDone. Task 11 completed successfully.")
 
 
