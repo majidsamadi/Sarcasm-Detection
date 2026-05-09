@@ -1,37 +1,34 @@
+
 # Presentation Key Points
 
 ## One-Sentence Project Summary
 
-We built an NLP sarcasm detection system using the SARC Reddit dataset, compared BERTweet and RoBERTa under two preprocessing settings, and selected RoBERTa Version A as the final model.
+This project built a sarcasm detection system using the SARC Reddit dataset and compared BERTweet and RoBERTa under two preprocessing settings.
 
-## Best Result
+## Main Methodology
 
-- Final model: E03_RoBERTa_VersionA
-- Accuracy: 0.7223
-- Macro-F1: 0.7167
-- Preprocessing: Stopwords kept
+- Dataset: SARC / Reddit comments
+- Task: binary classification, sarcastic vs non-sarcastic
+- Input: `parent_comment + comment`
+- Models: BERTweet and RoBERTa
+- Preprocessing versions: stopwords kept vs selective stopword removal
+- Metrics: accuracy, precision, recall, macro-F1, weighted-F1, confusion matrix
 
-## What We Learned
+## Final Result
 
-1. Keeping stopwords worked better than removing them.
-2. RoBERTa generalized better than BERTweet on the held-out test set.
-3. Sarcasm detection is highly context-dependent.
-4. Error analysis showed that misclassification can occur even with high confidence.
-5. The demo should be used for academic purposes only, not automatic moderation.
+- Final model: RoBERTa Version A
+- Stopwords: kept
+- Test accuracy: 0.7223
+- Test macro-F1: 0.7167
 
-## Expected Q&A
+## Main Finding
 
-### Why did we keep stopwords?
-Because Task 16 showed that stopword removal reduced performance for both models. Sarcasm often depends on sentence structure, contrast, and small function words.
+Stopword removal reduced performance for both BERTweet and RoBERTa. Keeping stopwords helped because sarcasm depends on context, contrast, and sentence structure.
 
-### Why did we choose RoBERTa instead of BERTweet?
-RoBERTa Version A achieved the best held-out test Macro-F1 and accuracy among the four controlled experiments.
+## Important Limitation
 
-### Why use parent_comment + comment?
-Sarcasm often requires conversational context. Combining parent comment and reply gives the model more context than the reply alone.
+The model should not be used for automatic moderation or punitive decisions because sarcasm is context-dependent and can be misclassified.
 
-### Can the model be used for moderation?
-No. The model is a research demo and should not automatically remove, flag, or penalize content.
+## Demo Talking Point
 
-### What is the biggest limitation?
-Sarcasm depends on culture, tone, context, speaker intent, and conversation history, which may be missing from text-only input.
+The enhanced dashboard shows the full AI/NLP workflow, including preprocessing, model comparison, reports, final prediction demo, and ethics/limitations.

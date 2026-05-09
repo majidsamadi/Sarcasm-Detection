@@ -1,334 +1,303 @@
-# Final Academic Documentation: Sarcasm Detection in Social Media Text
+
+# Final Report: Sarcasm Detection in Social Media Text using RoBERTa and BERTweet
 
 **Course:** WQF7007 Natural Language Processing  
-**Project:** NLP Application: Sarcasm Detection in Social Media Text using BERTweet and RoBERTa  
+**Project theme:** NLP application for sarcasm detection in social media text  
 **Dataset:** SARC / Self-Annotated Reddit Corpus  
-**Generated:** 2026-05-10 00:21  
-**Repository:** `https://github.com/majidsamadi/Sarcasm-Detection.git`  
-**Branch:** `main`  
-**Current Commit:** `f66e86b`
+**Final selected model:** RoBERTa Version A  
+**Final test accuracy:** 0.7223  
+**Final test macro-F1:** 0.7167  
+**Generated on:** 2026-05-10 00:39:06
 
 ---
 
 ## 1. Executive Summary
 
-This project developed an NLP system for **binary sarcasm detection** in social-media text. The system classifies Reddit-style text as either **sarcastic** or **non-sarcastic**. The final project uses the **SARC dataset**, applies two controlled preprocessing versions, compares **BERTweet** and **RoBERTa**, evaluates all experiments on a held-out test split, performs stopword-impact analysis, completes error analysis, selects the best model, and builds an interactive Streamlit demonstration dashboard.
+This project developed a sarcasm detection system for social media text using the SARC dataset. The task was framed as a binary classification problem: predicting whether a Reddit comment is sarcastic or non-sarcastic. The project followed a complete academic NLP workflow: preprocessing, dataset splitting, experiment design, transformer model training, full test evaluation, stopword impact analysis, model comparison, error analysis, final model selection, demonstration interface creation, enhanced dashboard development, and ethics/limitations documentation.
 
-The final selected model is **RoBERTa Version A**, where **stopwords are kept**. It was selected because it achieved the highest held-out test Macro-F1 among the four controlled experiments.
-
-**Final selected model:** `E03_RoBERTa_VersionA`  
-**Model family:** RoBERTa  
-**Preprocessing:** Stopwords kept  
-**Held-out test accuracy:** 0.7223  
-**Held-out test Macro-F1:** 0.7167  
-**Input strategy:** `parent_comment + comment` when context is available  
-**Maximum sequence length:** 128 tokens
+The final selected model is **RoBERTa Version A**, trained using the preprocessing version where stopwords are kept. It achieved the highest held-out test performance among the four controlled experiments, with **accuracy = 0.7223** and **macro-F1 = 0.7167**. The project also found that removing stopwords reduced performance for both BERTweet and RoBERTa, which supports the linguistic intuition that sarcasm often depends on small function words, contrastive structure, and context.
 
 ---
 
-## 2. Team Members and Contributions
+## 2. Problem Statement
 
-| Name | Student ID | Contribution / Role |
-| --- | --- | --- |
-| Faridah Albalawi | 22116678 | Project Manager; Data Engineer |
-| Dhanasree Seelam | 23077229 | Documentation Leader |
-| Gebriella Anthony | 17204189 | Evaluation and Ethics Specialist |
-| Majid Samadikuchaksaraee | 25068504 | Presenter; Modeling and ML Engineer; Evaluation and Ethics Specialist |
-| Rupika Selvaraja | 24082992 | Data Engineer; Modeling and ML Engineer |
+Sarcasm is difficult for NLP systems because the literal meaning of a sentence may differ from the intended meaning. Social media comments are especially challenging because they are short, informal, context-dependent, and often rely on hidden assumptions, prior conversation, punctuation, or contrast between a parent comment and a reply.
 
-The work was organized using the course-recommended structure: project coordination, data engineering, modeling, evaluation, ethics, documentation, and presentation. Some members contributed to more than one area, especially modeling/evaluation and data engineering.
+The main problem addressed in this project is:
+
+> How effectively can transformer-based NLP models detect sarcasm in Reddit-style social media text, and how does preprocessing, especially stopword removal, affect performance?
 
 ---
 
-## 3. Problem Statement
-
-Social media users often express sarcasm in short, informal, and context-dependent text. Sarcasm is difficult for NLP models because the literal meaning of a sentence may differ from the intended meaning. For example, a user may write something positive on the surface while actually expressing criticism or frustration. This makes sarcasm detection challenging for sentiment analysis, online conversation analysis, moderation-support systems, and social-media understanding.
-
-The project problem is therefore:
-
-> How can transformer-based NLP models detect sarcasm in Reddit-style social-media text, and how does preprocessing, especially stopword removal, affect model performance?
-
-The project does **not** claim to understand user intent perfectly. It is an academic demonstration of sarcasm classification using supervised NLP methods.
-
----
-
-## 4. Objectives
+## 3. Project Objectives
 
 The project objectives were:
 
-1. Prepare a cleaned version of the SARC dataset for binary sarcasm classification.
-2. Create two preprocessing versions:
-   - Version A: stopwords kept.
-   - Version B: selective stopword removal while preserving negations.
-3. Build a controlled experiment design comparing BERTweet and RoBERTa.
-4. Train and evaluate all four model/preprocessing combinations.
-5. Analyze whether stopword removal improves or reduces sarcasm-detection performance.
-6. Select one final model based mainly on held-out test Macro-F1.
-7. Perform error analysis to understand model weaknesses.
-8. Build a user-facing demo interface and enhanced interactive dashboard.
-9. Document ethical risks, limitations, and responsible-use boundaries.
+1. Build a sarcasm detection system that classifies social media text as sarcastic or non-sarcastic.
+2. Use the SARC dataset as the main data source.
+3. Reproduce the preprocessing workflow into the project repository so the dataset can be regenerated locally.
+4. Compare two transformer-based models: BERTweet and RoBERTa.
+5. Test two preprocessing versions: stopwords kept and selective stopword removal.
+6. Evaluate all experiments using accuracy, precision, recall, macro-F1, weighted-F1, classification reports, and confusion matrices.
+7. Conduct stopword impact analysis, model comparison, and error analysis.
+8. Select one final model for implementation.
+9. Build a Streamlit demo and an enhanced interactive NLP dashboard.
+10. Document ethical risks, limitations, and responsible-use guidance.
 
 ---
 
-## 5. Dataset Description
+## 4. Dataset Description
 
-The project uses the **SARC / Self-Annotated Reddit Corpus**, a Reddit-based sarcasm dataset. The dataset is suitable for this project because Reddit comments often contain conversational context, informal phrasing, and sarcastic expressions. The label is binary:
+The project uses the **SARC dataset**, also known as the Self-Annotated Reddit Corpus. The dataset contains Reddit comments labeled as sarcastic or non-sarcastic. The original dataset used in this project contained approximately **1,010,798+ rows** and was nearly balanced between sarcastic and non-sarcastic labels.
 
-- `0`: non-sarcastic
-- `1`: sarcastic
+The selected text input uses two fields:
 
-The original proposal described the dataset as approximately **1.01 million rows**, with a near-balanced sarcastic/non-sarcastic distribution. During implementation, the exact preprocessing reproduction produced a final aligned cleaned dataset of **965,087 rows**.
+- `parent_comment`: the previous/context comment
+- `comment`: the reply/comment to classify
 
-The main text fields used were:
-
-- `parent_comment`: contextual parent text
-- `comment`: target comment/reply
-- `label`: sarcasm label
-
-The model input uses **text-only input**, formed as:
+The final model input is constructed as:
 
 ```text
 parent_comment + comment
 ```
 
-when parent context exists. This is important because sarcasm often depends on conversational context.
+This choice is important because sarcasm often depends on context. For example, a reply may sound normal in isolation but sarcastic when read after the parent comment.
 
 ---
 
-## 6. Methodology Overview
+## 5. Preprocessing Workflow
 
-The project followed a controlled academic NLP workflow:
+Two preprocessing versions were created.
 
-1. Data preparation and exact preprocessing reproduction.
-2. Controlled preprocessing-version creation.
-3. Stratified train/validation/test splitting.
-4. Experiment design with fixed model/preprocessing combinations.
-5. Transformer fine-tuning.
-6. Full held-out test evaluation.
-7. Stopword-impact analysis.
-8. Model comparison and final selection.
-9. Error analysis.
-10. Demo interface and enhanced dashboard.
-11. Ethics and limitations documentation.
-12. Final report generation.
+### 5.1 Version A: Stopwords Kept
 
-This structure ensures that the project is not only a coding exercise, but a reproducible academic NLP pipeline.
+Version A was designed to preserve sarcasm-related linguistic signals. The preprocessing workflow handled:
+
+- null and empty comments
+- URL rows
+- `[deleted]` and `[removed]` comments
+- markdown/code noise
+- duplicate rows
+- spam-like or repetitive rows
+- extra whitespace
+- very long rows above the configured BERTweet token threshold
+
+Version A intentionally kept:
+
+- stopwords
+- punctuation
+- casing
+- ALL CAPS
+- negation words
+
+This was important because sarcasm may depend on punctuation, contrastive wording, negation, sentence structure, and small function words.
+
+### 5.2 Version B: Selective Stopword Removal
+
+Version B was created from Version A by applying selective stopword removal. The preprocessing removed common stopwords but preserved negation terms such as:
+
+- `not`
+- `no`
+- `never`
+- `don't`
+- `can't`
+- similar negation expressions
+
+The purpose of Version B was to test the lecturer's question: whether removing stopwords improves or reduces model performance.
+
+### 5.3 Important Experience: Exact Reproduction Correction
+
+During the implementation, an earlier clean project version of preprocessing produced a slightly different row count. This was identified as a methodological risk because Tasks 9 and 10 were supposed to reproduce the teammate's preprocessing exactly, not redesign it.
+
+The project was corrected by:
+
+1. Reproducing the teammate's notebook logic exactly.
+2. Fixing only a local pandas compatibility issue where null handling caused a local execution error.
+3. Regenerating `A.csv` and `B.csv` with the expected final aligned row count of **965,087 rows**.
+4. Removing the earlier non-exact preprocessing files to avoid confusion.
+
+This correction improved the reproducibility and academic integrity of the project.
 
 ---
 
-## 7. Task Completion Matrix
+## 6. Train/Validation/Test Split
 
-| Task | Activity | Status | Summary |
-| --- | --- | --- | --- |
-| 09 | Preprocessing Version A | Completed | Reproduced teammate preprocessing exactly and generated A.csv with stopwords kept. |
-| 10 | Preprocessing Version B | Completed | Generated B.csv by selectively removing stopwords while preserving negation words. |
-| 11 | Train/Validation/Test Split | Completed | Created stratified 80/10/10 splits for Version A and Version B using the same random seed. |
-| 12 | Model Experiment Design | Completed | Defined four controlled experiments across two models and two preprocessing versions. |
-| 13 | Train BERTweet | Completed | Fine-tuned BERTweet on Version A and Version B. |
-| 14 | Train RoBERTa | Completed | Fine-tuned RoBERTa on Version A and Version B. |
-| 15 | Model Evaluation | Completed | Evaluated all four experiments on the held-out test set with accuracy, precision, recall, F1, and confusion matrices. |
-| 16 | Stopword Impact Analysis | Completed | Compared Version A and Version B to determine whether stopword removal helped or reduced performance. |
-| 17 | Model Comparison | Completed | Ranked the four experiments mainly by held-out test macro-F1. |
-| 18 | Error Analysis | Completed | Analyzed false positives, false negatives, confidence patterns, text length, and surface features for the best model. |
-| 19 | Final Model Selection | Completed | Selected RoBERTa Version A as the final model based mainly on test macro-F1. |
-| 20 | Demo Interface | Completed | Created a Streamlit prediction demo using the selected local checkpoint. |
-| 20B | Enhanced Interactive Dashboard | Completed | Created a fuller Streamlit dashboard showing workflow progress, reports, results, and demo. |
-| 21 | Ethics and Limitations | Completed | Generated a risk register, responsible-use checklist, and ethics/limitations documentation. |
-| 22 | Final Report Writing | Completed by this script | Generated full academic documentation from the completed project outputs. |
+Task 11 created a stratified 80/10/10 split for both Version A and Version B.
+
+Final split sizes:
+
+| Split | Rows |
+|---|---:|
+| Train | 772,069 |
+| Validation | 96,509 |
+| Test | 96,509 |
+
+The same split indices were used for both preprocessing versions. This was necessary for fair comparison because Version A and Version B needed to differ only in preprocessing, not in which records appeared in each split.
 
 ---
 
-## 8. Detailed Activity Log and Implementation Experience
-
-### 8.1 Project Scope Finalization
-
-The final project scope became **sarcasm detection from social-media text using the SARC dataset**. The task was defined as binary classification: sarcastic vs non-sarcastic. The team decided to compare BERTweet and RoBERTa, and to evaluate whether stopword removal helps or hurts the model.
-
-### 8.2 Preprocessing Version A: Stopwords Kept
-
-Version A was the main preprocessing version. The team intentionally kept stopwords, punctuation, casing, and other linguistic signals because sarcasm may depend on small function words, negations, contrastive phrasing, and punctuation.
-
-Preprocessing activities included:
-
-- Removing null or empty comments.
-- Removing URL rows and obvious link noise.
-- Removing `[deleted]` and `[removed]` comments.
-- Handling markdown/code-like noise.
-- Removing duplicate rows.
-- Handling spam-like or repetitive text rows.
-- Normalizing whitespace.
-- Applying a token-length threshold based on BERTweet tokenization.
-- Saving the final Version A file as `data/processed/A.csv`.
-
-A key implementation experience was that the team first had a non-exact preprocessing reproduction that produced a different row count. This was corrected by reproducing the teammate's notebook logic exactly. The final correct aligned row count became **965,087 rows**.
-
-### 8.3 Preprocessing Version B: Selective Stopword Removal
-
-Version B was created from Version A by removing stopwords selectively. Negation words were preserved because words such as `not`, `no`, `never`, `don't`, and similar forms can change meaning and are especially important in sarcasm and sentiment-related tasks.
-
-Version B was used as an ablation experiment to answer the lecturer's question about whether stopword removal improves performance.
-
-### 8.4 Train/Validation/Test Split
-
-Task 11 created a stratified split so that both classes remained balanced across train, validation, and test sets. The same split was used for Version A and Version B, ensuring fair comparison.
-
-| Dataset Version | Train Rows | Validation Rows | Test Rows |
-| --- | --- | --- | --- |
-| versionA | {'rows': 772069, 'label_distribution': {'0': {'count': 383897, 'percentage': 49.7231}, '1': {'count': 388172, 'percentage': 50.2769}}} | {'rows': 96509, 'label_distribution': {'0': {'count': 47987, 'percentage': 49.7228}, '1': {'count': 48522, 'percentage': 50.2772}}} | {'rows': 96509, 'label_distribution': {'0': {'count': 47987, 'percentage': 49.7228}, '1': {'count': 48522, 'percentage': 50.2772}}} |
-| versionB | {'rows': 772069, 'label_distribution': {'0': {'count': 383897, 'percentage': 49.7231}, '1': {'count': 388172, 'percentage': 50.2769}}} | {'rows': 96509, 'label_distribution': {'0': {'count': 47987, 'percentage': 49.7228}, '1': {'count': 48522, 'percentage': 50.2772}}} | {'rows': 96509, 'label_distribution': {'0': {'count': 47987, 'percentage': 49.7228}, '1': {'count': 48522, 'percentage': 50.2772}}} |
-
-The split strategy was:
-
-- Train: 80%
-- Validation: 10%
-- Test: 10%
-- Random seed: 42
-- Same row alignment across Version A and Version B
-
-The use of the same split for all experiments is important because otherwise model performance could be affected by different data distributions.
-
-### 8.5 Experiment Design
+## 7. Experiment Design
 
 Task 12 defined four controlled experiments:
 
-| Experiment | Model | Dataset Version | Purpose |
-|---|---|---|---|
-| E01 | BERTweet | Version A | BERTweet with stopwords kept |
-| E02 | BERTweet | Version B | BERTweet with selective stopword removal |
-| E03 | RoBERTa | Version A | RoBERTa with stopwords kept |
-| E04 | RoBERTa | Version B | RoBERTa with selective stopword removal |
+| Experiment | Model | Preprocessing Version | Stopword Setting |
+| --- | --- | --- | --- |
+| E01 | BERTweet | Version A | Stopwords kept |
+| E02 | BERTweet | Version B | Selective stopword removal |
+| E03 | RoBERTa | Version A | Stopwords kept |
+| E04 | RoBERTa | Version B | Selective stopword removal |
 
 All experiments used:
 
-- Text-only input.
-- The same split strategy.
-- Max length 128.
-- Comparable metrics.
-- Accuracy as supporting metric.
-- Macro-F1 as the main ranking metric.
+- text-only input
+- `parent_comment + comment`
+- max sequence length of 128
+- the same train/validation/test split
+- the same evaluation metrics
+- macro-F1 as the main selection metric
 
-### 8.6 Model Training Experience
+---
 
-The team fine-tuned two transformer models:
+## 8. Model Training
 
-- **BERTweet**, selected because it is trained for social-media/Twitter-style text.
-- **RoBERTa**, selected as a strong general transformer baseline for text classification.
+### 8.1 BERTweet Training
 
-Due to local compute constraints, training used a practical sample of **50,000 training rows and 10,000 validation rows per version**, while final evaluation used the full held-out test split. This is important to state transparently in the academic report.
+Task 13 trained BERTweet on Version A and Version B. BERTweet was included because it is designed for social-media-style language. During implementation, a label-column handling issue occurred, where the training script expected a hardcoded column name. This was fixed by rewriting the label loading logic to robustly detect the correct label column.
 
-Validation results during training were:
+### 8.2 RoBERTa Training
 
-| Experiment | Model | Version | Validation Accuracy | Validation Macro-F1 |
-| --- | --- | --- | --- | --- |
-| E01_BERTweet_VersionA | BERTweet | Version A | 0.7634 | 0.7633 |
-| E02_BERTweet_VersionB | BERTweet | Version B | 0.7267 | 0.7265 |
-| E03_RoBERTa_VersionA | RoBERTa | Version A | 0.7475 | 0.7474 |
-| E04_RoBERTa_VersionB | RoBERTa | Version B | 0.7189 | 0.7189 |
+Task 14 trained RoBERTa on Version A and Version B. RoBERTa was included as a strong general-purpose transformer baseline. The training process saved local model checkpoints under `models/roberta/`, while code and reports were pushed to GitHub.
 
-An important observation was that BERTweet looked strong on validation, but later underperformed on full held-out test evaluation. This difference became an important learning point: validation performance alone should not be treated as the final decision.
+### 8.3 Training Practicality
 
-### 8.7 Model Evaluation
+For practical local computation, model training used a controlled subset for training and validation in the practical run:
 
-Task 15 evaluated all four experiments on the held-out test set. Evaluation metrics included:
+- 50,000 training rows per version
+- 10,000 validation rows per version
 
-- Accuracy
-- Macro precision
-- Macro recall
-- Macro-F1
-- Weighted-F1
-- Per-class classification report
-- Confusion matrix
+This was transparently documented. The final evaluation, however, was performed on the full held-out test set.
 
-Final held-out test ranking:
+---
 
-| Rank | Experiment | Model | Version | Preprocessing | Accuracy | Macro-F1 | Macro Precision | Macro Recall |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | E03_RoBERTa_VersionA | RoBERTa | Version A | Stopwords kept | 0.7223 | 0.7167 | 0.7430 | 0.7231 |
-| 2 | E04_RoBERTa_VersionB | RoBERTa | Version B | Selective stopword removal | 0.6773 | 0.6648 | 0.7106 | 0.6784 |
-| 3 | E01_BERTweet_VersionA | BERTweet | Version A | Stopwords kept | 0.5092 | 0.3632 | 0.6638 | 0.5118 |
-| 4 | E02_BERTweet_VersionB | BERTweet | Version B | Selective stopword removal | 0.5018 | 0.3452 | 0.6403 | 0.5046 |
+## 9. Model Evaluation
 
-The strongest experiment was **RoBERTa Version A**.
+Task 15 evaluated all four trained models on the full held-out test set. The evaluation generated:
 
-### 8.8 Stopword Impact Analysis
+- accuracy
+- macro precision
+- macro recall
+- macro-F1
+- weighted-F1
+- per-class classification reports
+- confusion matrices
+- comparison summaries
 
-Task 16 answered the preprocessing question directly. Keeping stopwords performed better than selective stopword removal for both BERTweet and RoBERTa.
+During implementation, an evaluation function parameter mismatch occurred (`max_test_samples` issue). This was fixed by rewriting the evaluation script and rerunning full evaluation successfully.
 
-Main finding:
+---
 
-> Stopword removal reduced performance for both model families. Therefore, keeping stopwords is more suitable for this sarcasm-detection task.
+## 10. Final Evaluation Results
 
-This makes sense because sarcasm often depends on function words, word order, contrast, and context. Removing too many words can weaken the information needed to detect sarcastic intent.
+| Rank | Experiment | Model | Version | Stopword Setting | Accuracy | Macro-F1 | Decision |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | E03 | RoBERTa | Version A | Stopwords kept | 0.7223 | 0.7167 | Selected final model |
+| 2 | E04 | RoBERTa | Version B | Selective stopword removal | 0.6773 | 0.6648 | Second best |
+| 3 | E01 | BERTweet | Version A | Stopwords kept | 0.5092 | 0.3632 | Lower test generalization |
+| 4 | E02 | BERTweet | Version B | Selective stopword removal | 0.5018 | 0.3452 | Lowest ranked |
 
-### 8.9 Model Comparison
+The best-performing experiment was **E03 RoBERTa Version A**, with:
 
-Task 17 ranked the four experiments mainly by held-out test Macro-F1. Accuracy was used as a supporting metric, but Macro-F1 was prioritized because it gives a more balanced view of class-level performance.
+- Accuracy: **0.7223**
+- Macro-F1: **0.7167**
 
-The final ranking showed:
+---
 
-1. RoBERTa Version A
-2. RoBERTa Version B
-3. BERTweet Version A
-4. BERTweet Version B
+## 11. Stopword Impact Analysis
 
-This result means that RoBERTa generalized better than BERTweet in the final test evaluation, even though BERTweet had looked stronger earlier on validation.
+Task 16 compared Version A and Version B for both models.
 
-### 8.10 Error Analysis
+Results showed that keeping stopwords performed better:
 
-Task 18 analyzed the selected best model, RoBERTa Version A. The analysis considered:
+| Model | Stopwords Kept Macro-F1 | Stopwords Removed Macro-F1 | Conclusion |
+|---|---:|---:|---|
+| BERTweet | 0.3632 | 0.3452 | Keeping stopwords helped |
+| RoBERTa | 0.7167 | 0.6648 | Keeping stopwords helped |
 
-- False positives: non-sarcastic comments predicted as sarcastic.
-- False negatives: sarcastic comments predicted as non-sarcastic.
-- Confidence patterns.
-- Text-length error behavior.
-- Surface-feature error rates.
+This result is academically meaningful. Sarcasm often depends on sentence structure, contrast, negation, and subtle function words. Removing stopwords may remove useful context that the transformer could otherwise use.
 
-Raw text examples were stored locally only and ignored by Git to avoid publishing raw Reddit examples unnecessarily.
+---
 
-The major lesson from error analysis is that sarcasm remains difficult because it often depends on missing context, cultural knowledge, tone, conversation history, and implicit meaning.
+## 12. Model Comparison
 
-### 8.11 Final Model Selection
+Task 17 ranked all experiments using macro-F1 as the main criterion. RoBERTa Version A ranked first. This result also revealed a key lesson: validation performance alone can be misleading. Earlier, BERTweet appeared stronger during validation, but the full held-out test evaluation showed RoBERTa Version A generalized better.
 
-Task 19 selected **RoBERTa Version A** as the final model.
+The final model comparison demonstrated the value of:
 
-Selection justification:
+- using a held-out test set
+- using macro-F1 rather than accuracy only
+- keeping preprocessing conditions controlled
+- comparing models fairly under the same split
 
-- It achieved the highest held-out test Macro-F1.
-- It achieved the highest accuracy among the four experiments.
-- Version A preprocessing kept context-rich linguistic signals.
-- Stopword removal was shown to reduce performance.
-- It was supported by model comparison and error analysis.
+---
 
-Final model details:
+## 13. Error Analysis
+
+Task 18 performed error analysis for the selected best model: RoBERTa Version A. The analysis examined:
+
+- false positives
+- false negatives
+- confidence patterns
+- text-length behavior
+- surface features such as punctuation and casing
+- high-confidence errors
+
+Raw error examples containing Reddit text were saved locally only and ignored by Git. Aggregate reports and figures were committed to GitHub.
+
+The main insight is that sarcasm remains difficult when:
+
+- the comment lacks enough conversational context
+- sarcasm is implicit
+- humor depends on cultural knowledge
+- the model over-relies on surface wording
+- the text is short or ambiguous
+
+---
+
+## 14. Final Model Selection
+
+Task 19 selected **RoBERTa Version A** as the final model because it had the best test macro-F1.
+
+Final model configuration:
 
 | Item | Value |
 |---|---|
-| Selected experiment | E03_RoBERTa_VersionA |
-| Model family | RoBERTa |
-| Preprocessing | Version A, stopwords kept |
-| Input | parent_comment + comment |
+| Selected model | RoBERTa Version A |
+| Experiment ID | E03 |
+| Preprocessing | Version A |
+| Stopwords | Kept |
+| Input | `parent_comment + comment` |
 | Max length | 128 |
 | Test accuracy | 0.7223 |
-| Test Macro-F1 | 0.7167 |
+| Test macro-F1 | 0.7167 |
 | Local checkpoint | `models/roberta/versionA` |
 
-### 8.12 Demo Interface
+---
 
-Task 20 created a Streamlit demo interface. The app allows the user to enter:
+## 15. Demo Interface
+
+Task 20 created a local Streamlit demo. The app allows a user to enter:
 
 - optional parent comment/context
 - main comment to classify
 
-The app returns:
+The app outputs:
 
 - predicted class: sarcastic or non-sarcastic
 - confidence score
 - class probabilities
-- combined model input
-- technical details
 - ethical warning
 
-The demo uses the local model checkpoint at:
+The local demo loads the final checkpoint from:
 
 ```text
 models/roberta/versionA
@@ -336,233 +305,144 @@ models/roberta/versionA
 
 A smoke test was completed successfully.
 
-### 8.13 Enhanced Interactive Dashboard
+---
 
-Task 20B improved the UI into an interactive NLP workflow dashboard. The dashboard includes:
+## 16. Enhanced Interactive Dashboard
 
-- Project overview.
-- Workflow progress from preprocessing to demo.
-- Pipeline runner for local scripts.
-- Live model demo.
-- Results dashboard.
-- Reports explorer.
-- Error analysis viewer.
-- Hosting readiness section.
+Task 20B extended the UI into a full interactive NLP dashboard. The enhanced dashboard includes:
 
-This dashboard was designed to show the full AI/NLP process, not only the final prediction.
+- workflow overview
+- task progress tracking
+- pipeline runner controls
+- final model prediction demo
+- results dashboard
+- reports explorer
+- error analysis section
+- hosting readiness section
 
-### 8.14 Ethics and Limitations
+This dashboard is useful for presentation because it shows the full AI/NLP lifecycle rather than only a prediction box.
 
-Task 21 produced a responsible-use analysis. Main risks included:
+Important design decision:
 
-- Misclassification risk.
-- Context loss.
-- Reddit dataset bias.
-- Privacy concerns.
-- Over-reliance on confidence scores.
-- Deployment misuse.
-- Compute and reproducibility limitations.
-- Cultural and linguistic limitations.
-
-The final system should **not** be used to automatically remove, flag, penalize, or judge user content. It is an academic demonstration and should be interpreted cautiously.
+- Local dashboard can trigger project scripts.
+- Public hosted version should not trigger heavy training jobs.
 
 ---
 
-## 9. Technical Architecture
+## 17. Ethics and Limitations
 
-The final system has the following structure:
+Task 21 documented responsible-use concerns. Key risks include:
 
-```text
-SARC Dataset
-  -> Version A preprocessing: stopwords kept
-  -> Version B preprocessing: selective stopword removal
-  -> stratified train/validation/test split
-  -> BERTweet and RoBERTa fine-tuning
-  -> full test evaluation
-  -> stopword impact analysis
-  -> model comparison
-  -> final model selection
-  -> Streamlit demo and enhanced dashboard
-```
+1. **Misclassification risk**: sarcastic and non-sarcastic comments may be confused.
+2. **Context limitation**: sarcasm often requires broader conversation history.
+3. **Dataset bias**: Reddit language may not represent all users or platforms.
+4. **Privacy concerns**: social media data can contain sensitive expressions.
+5. **Over-reliance on confidence**: high model confidence does not guarantee correctness.
+6. **Deployment misuse**: the model should not be used to automatically punish, remove, or flag user content.
+7. **Compute limitation**: full-scale transformer training requires significant resources.
+8. **Cultural and linguistic limitation**: sarcasm differs across cultures, communities, and languages.
 
-Repository-level structure:
+The responsible-use position is:
 
-```text
-configs/        experiment and final model configuration files
-docs/           methodology and task documentation
-src/            preprocessing, training, evaluation, reporting, prediction utilities
-app/            Streamlit simple demo and enhanced dashboard
-reports/        generated reports, metrics, figures, summaries
-models/         local-only model checkpoints, ignored by Git
-data/           local-only raw/processed/split data, ignored by Git
-```
+> This model is suitable for coursework demonstration and research analysis, but not for automated moderation or punitive decision-making.
 
 ---
 
-## 10. Reproducibility Notes
+## 18. Technical Challenges Experienced
 
-The repository was organized to keep source code and reports in GitHub, while large local files remain ignored:
+Several important implementation challenges were encountered and resolved:
+
+### 18.1 Exact Preprocessing Reproduction
+
+The first preprocessing pipeline produced a different dataset size. The team identified that this was not aligned with the requirement to reproduce the teammate's exact Task 9 and Task 10 workflow. The pipeline was corrected and regenerated.
+
+### 18.2 Local Pandas Compatibility
+
+A local pandas issue occurred when null comment values were processed before being dropped. The fix preserved the final logic while avoiding local execution failure.
+
+### 18.3 Label Column Handling
+
+The BERTweet training script initially expected a hardcoded label column. This caused a `KeyError`. The script was rewritten to handle label columns robustly.
+
+### 18.4 Evaluation Function Bug
+
+The evaluation script initially had a mismatch between function parameters and function call. This was fixed and Task 15 was rerun successfully.
+
+### 18.5 Validation vs Test Difference
+
+BERTweet appeared promising during validation, but full test evaluation showed RoBERTa Version A was stronger. This reinforced the importance of held-out test evaluation.
+
+### 18.6 Local vs Hosted Model Storage
+
+The model checkpoint is local-only and ignored by Git because it is large. For Hugging Face hosting, the checkpoint should be uploaded to a Hugging Face Model Hub repository and then loaded by the app.
+
+---
+
+## 19. What We Learned
+
+The project provided several lessons:
+
+1. Sarcasm detection is more than sentiment classification; it requires context and subtle language understanding.
+2. Preprocessing must be task-aware. Removing stopwords can hurt performance when function words carry meaning.
+3. Fair comparison requires the same dataset split and the same evaluation metrics.
+4. Validation results are useful but not final; held-out test evaluation is essential.
+5. Transformer models still make errors on implicit, cultural, or context-heavy sarcasm.
+6. Reproducibility requires exact scripts, fixed random seeds, documented assumptions, and clear separation of local artifacts from Git-tracked code.
+7. UI/UX can strengthen an academic project by making the NLP pipeline explainable and interactive.
+8. Ethics and limitations are not optional; they are part of responsible NLP development.
+
+---
+
+## 20. Repository and Reproducibility
+
+The project repository contains:
+
+- source code in `src/`
+- Streamlit apps in `app/`
+- task documentation in `docs/`
+- report outputs in `reports/`
+- configs in `configs/`
+- runner scripts in the root folder
+
+Large local artifacts are intentionally ignored by Git:
 
 - raw dataset CSV files
-- processed A/B CSV files
+- processed dataset CSV files
 - split CSV files
 - local model checkpoints
-- raw Reddit error samples
+- raw Reddit error examples
 
-This is good practice because GitHub is not ideal for large model/data artifacts. For future hosting, the final model should be uploaded to a Hugging Face model repository, and the app should load the model from there.
-
----
-
-## 11. Results Discussion
-
-The strongest final result was achieved by RoBERTa Version A. The key pattern was that **keeping stopwords improved performance** for both model families. This suggests that sarcasm detection benefits from retaining sentence structure and small words that contribute to tone, contrast, and meaning.
-
-The BERTweet result was unexpected. Although BERTweet is designed for social-media text, it underperformed on full test evaluation compared with RoBERTa. Possible reasons include:
-
-- SARC is Reddit-based rather than Twitter-based.
-- Reddit comments may differ in style from tweets.
-- Training sample size and local compute limits may affect generalization.
-- RoBERTa's general language representations may better capture Reddit comment structure.
+This keeps the GitHub repository clean while preserving reproducibility through scripts.
 
 ---
 
-## 12. Challenges and Lessons Learned
+## 21. Hugging Face Hosting Recommendation
 
-### 12.1 Exact Reproduction Matters
+For hosting, the recommended architecture is:
 
-The team initially saw a mismatch between non-exact preprocessing and the teammate's notebook output. This was corrected by reproducing the notebook logic exactly. The lesson is that preprocessing details can change dataset size and therefore affect all downstream results.
+| Component | Recommendation |
+|---|---|
+| Source code | GitHub repository |
+| Model checkpoint | Hugging Face Model Hub |
+| Hosted demo | Hugging Face Spaces |
+| UI framework | Streamlit or Docker-based Streamlit Space |
+| Public behavior | Inference and reports only |
+| Heavy training | Local only, not public hosted execution |
 
-### 12.2 GitHub Should Not Store Large Data and Model Files
+The public hosted version should avoid triggering heavy training jobs. It should focus on:
 
-The project correctly kept large datasets and checkpoints local. This prevented accidental upload of large files and made the repository cleaner.
-
-### 12.3 Validation and Test Results Can Differ
-
-BERTweet had strong validation results but much weaker full test results. This showed why final selection should be based on held-out test evaluation rather than validation performance alone.
-
-### 12.4 Stopword Removal Is Not Always Good
-
-The experiment showed that removing stopwords reduced performance. This directly supports the course concept that preprocessing should be task-dependent.
-
-### 12.5 UI Adds Communication Value
-
-The enhanced dashboard makes the project easier to explain because users can see not only the prediction result but also the full NLP pipeline, reports, metrics, error analysis, and ethics documentation.
-
----
-
-## 13. Ethical Considerations
-
-Sarcasm detection can be sensitive because sarcastic language depends on context, culture, speaker intent, and social norms. A model may misclassify sincere comments as sarcastic or sarcastic comments as sincere. Therefore:
-
-- The system should be used only as a research or educational demo.
-- The model should not automatically moderate users.
-- Confidence scores should not be interpreted as certainty about intent.
-- Raw text examples should be handled responsibly.
-- The limitations of Reddit-based data should be clearly disclosed.
+- final model inference
+- project explanation
+- reports
+- model comparison
+- limitations and ethics
 
 ---
 
-## 14. Final Demo and Dashboard
+## 22. Conclusion
 
-Two user interfaces are available:
+This project successfully implemented a complete NLP workflow for sarcasm detection using the SARC dataset. The workflow included preprocessing, controlled experiment design, transformer training, evaluation, stopword analysis, model comparison, error analysis, final model selection, demo development, enhanced dashboard creation, and ethics documentation.
 
-| Interface | File | Purpose |
-|---|---|---|
-| Simple prediction demo | `app/streamlit_app.py` | Clean single-purpose sarcasm prediction demo |
-| Enhanced dashboard | `app/enhanced_dashboard.py` | Full workflow dashboard with progress, reports, results, and demo |
+The final selected model is **RoBERTa Version A**, which achieved the best held-out test macro-F1. The project also found that keeping stopwords improved model performance, supporting the idea that sarcasm depends heavily on context and sentence structure.
 
-Run the enhanced dashboard locally:
-
-```bash
-bash run_enhanced_dashboard.sh
-```
-
-Run the simple demo locally:
-
-```bash
-bash run_task20_demo.sh
-```
-
----
-
-## 15. Hosting Recommendation
-
-For future public deployment, the recommended architecture is:
-
-```text
-GitHub repository
-  -> source code, reports, scripts, documentation
-
-Hugging Face Model Hub
-  -> final RoBERTa Version A model checkpoint
-
-Hugging Face Space
-  -> Streamlit app or Docker-based Streamlit app
-  -> loads final model from Hugging Face Model Hub
-```
-
-The hosted public version should mainly support inference and report viewing. It should not allow public users to trigger heavy training tasks because training is resource-intensive and outputs may not persist reliably on free hosting.
-
----
-
-## 16. Conclusion
-
-This project successfully completed an end-to-end academic NLP workflow for sarcasm detection. The team prepared the dataset, designed controlled experiments, trained transformer models, evaluated all models, analyzed preprocessing impact, selected a final model, created a demo interface, built an enhanced dashboard, and documented ethical limitations.
-
-The final conclusion is:
-
-> RoBERTa with Version A preprocessing, where stopwords are kept, is the best-performing model in this project. Stopword removal reduced performance, indicating that sarcasm detection benefits from preserving context and sentence structure.
-
----
-
-## 17. References
-
-- SARC / Self-Annotated Reddit Corpus for sarcasm research.
-- RoBERTa: Robustly Optimized BERT Pretraining Approach.
-- BERTweet: A pretrained language model for English Tweets.
-- Hugging Face Transformers documentation.
-- Streamlit documentation.
-- Scikit-learn evaluation metrics documentation.
-- WQF7007 NLP course materials and project guidelines.
-
----
-
-## 18. Source Files Used for This Documentation
-
-| Source File | Status |
-| --- | --- |
-| docs/task09_10_exact_reproduction_note.md | Available |
-| reports/task11_split_summary.md | Available |
-| docs/task12_model_experiment_design.md | Available |
-| reports/task13/task13_bertweet_training_summary.md | Available |
-| reports/task14/task14_roberta_training_summary.md | Available |
-| reports/task15/task15_model_evaluation_summary.md | Available |
-| reports/task16/task16_stopword_impact_summary.md | Available |
-| reports/task17/task17_model_comparison_summary.md | Available |
-| reports/task18/task18_error_analysis_summary.md | Available |
-| reports/task19/task19_final_model_selection_summary.md | Available |
-| reports/task19/final_model_card.md | Available |
-| docs/task20_demo_interface.md | Available |
-| docs/task20b_enhanced_interactive_dashboard.md | Available |
-| docs/task21_ethics_and_limitations.md | Available |
-| reports/task21/task21_risk_register.csv | Available |
-| reports/task21/task21_responsible_use_checklist.md | Available |
-
----
-
-## 19. Latest Git Log Snapshot
-
-```text
-f66e86b Add Task 21 ethics and limitations
-7671cb2 Hide Streamlit menu for presentation UI
-2c67660 Hide Streamlit deploy button for demo UI
-891c204 Add enhanced interactive NLP dashboard
-6332bd0 Add Task 20 demo interface
-889ef0b Add Task 19 final model selection
-f46ab24 Add Task 18 error analysis
-8cb514d Add Task 17 model comparison
-f8448ee Add Task 16 stopword impact analysis
-00cbf4d Fix and complete Task 15 model evaluation
-04050ed Add Task 14 RoBERTa training
-d4c6aa7 Fix and complete Task 13 BERTweet training
-```
+The final system is suitable for academic demonstration and research exploration, but it should not be used for automated moderation or punitive decisions.

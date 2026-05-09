@@ -96,3 +96,5 @@ reports/ui_runs/
 reports/task20b/local_only/**
 reports/task21/local_only/**
 reports/final_report/local_only/**
+# Local data/model/runtime artifacts
+reports/**/local_only/**
