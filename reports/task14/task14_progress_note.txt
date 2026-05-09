@@ -1,0 +1,1 @@
+RoBERTa training completed for Version A and Version B using the controlled experiment design. Version A achieved validation accuracy 0.7475 and macro-F1 0.7474; Version B achieved validation accuracy 0.7189 and macro-F1 0.7189. Metrics were saved under reports/task14, and local checkpoints were saved under models/roberta.

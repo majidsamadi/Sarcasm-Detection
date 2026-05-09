@@ -1,0 +1,200 @@
+{
+  "task": "Task 14 - Train RoBERTa",
+  "experiment_id": "E03",
+  "experiment_name": "E03_RoBERTa_VersionA",
+  "model_name": "roberta-base",
+  "dataset_version": "versionA",
+  "stopword_setting": "stopwords_kept",
+  "text_input_strategy": "parent_comment_plus_comment",
+  "train_metadata": {
+    "path": "/Users/samadi/Master AI/NLP/Sarcasm-Detection/data/splits/versionA/train.csv",
+    "rows": 50000,
+    "columns": [
+      "row_id",
+      "parent_comment",
+      "comment",
+      "label",
+      "model_text"
+    ],
+    "label_col": "label",
+    "label_distribution": {
+      "0": 24896,
+      "1": 25104
+    }
+  },
+  "valid_metadata": {
+    "path": "/Users/samadi/Master AI/NLP/Sarcasm-Detection/data/splits/versionA/valid.csv",
+    "rows": 10000,
+    "columns": [
+      "row_id",
+      "parent_comment",
+      "comment",
+      "label",
+      "model_text"
+    ],
+    "label_col": "label",
+    "label_distribution": {
+      "0": 4940,
+      "1": 5060
+    }
+  },
+  "training_args": {
+    "epochs": 1,
+    "batch_size": 8,
+    "gradient_accumulation_steps": 4,
+    "learning_rate": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 128,
+    "random_seed": 42,
+    "max_train_samples": 50000,
+    "max_valid_samples": 10000,
+    "device": "mps"
+  },
+  "best_epoch": 1,
+  "best_validation_macro_f1": 0.7474312381545876,
+  "best_validation_metrics": {
+    "accuracy": 0.7475,
+    "precision_macro": 0.7482727523234549,
+    "recall_macro": 0.7478056840184987,
+    "macro_f1": 0.7474312381545876,
+    "precision_weighted": 0.7484788196097096,
+    "recall_weighted": 0.7475,
+    "weighted_f1": 0.7473812295397422,
+    "per_class": {
+      "non_sarcastic_0": {
+        "precision": 0.7311004784688995,
+        "recall": 0.7732793522267206,
+        "f1": 0.7515986227250369,
+        "support": 4940
+      },
+      "sarcastic_1": {
+        "precision": 0.7654450261780105,
+        "recall": 0.7223320158102767,
+        "f1": 0.7432638535841383,
+        "support": 5060
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "non_sarcastic_0",
+        "sarcastic_1"
+      ],
+      "matrix": [
+        [
+          3820,
+          1120
+        ],
+        [
+          1405,
+          3655
+        ]
+      ]
+    },
+    "classification_report": {
+      "non_sarcastic": {
+        "precision": 0.7311004784688995,
+        "recall": 0.7732793522267206,
+        "f1-score": 0.7515986227250369,
+        "support": 4940.0
+      },
+      "sarcastic": {
+        "precision": 0.7654450261780105,
+        "recall": 0.7223320158102767,
+        "f1-score": 0.7432638535841383,
+        "support": 5060.0
+      },
+      "accuracy": 0.7475,
+      "macro avg": {
+        "precision": 0.7482727523234549,
+        "recall": 0.7478056840184987,
+        "f1-score": 0.7474312381545876,
+        "support": 10000.0
+      },
+      "weighted avg": {
+        "precision": 0.7484788196097096,
+        "recall": 0.7475,
+        "f1-score": 0.7473812295397422,
+        "support": 10000.0
+      }
+    },
+    "loss": 0.5195970235168934
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.5666554644727707,
+      "valid_loss": 0.5195970235168934,
+      "valid_metrics": {
+        "accuracy": 0.7475,
+        "precision_macro": 0.7482727523234549,
+        "recall_macro": 0.7478056840184987,
+        "macro_f1": 0.7474312381545876,
+        "precision_weighted": 0.7484788196097096,
+        "recall_weighted": 0.7475,
+        "weighted_f1": 0.7473812295397422,
+        "per_class": {
+          "non_sarcastic_0": {
+            "precision": 0.7311004784688995,
+            "recall": 0.7732793522267206,
+            "f1": 0.7515986227250369,
+            "support": 4940
+          },
+          "sarcastic_1": {
+            "precision": 0.7654450261780105,
+            "recall": 0.7223320158102767,
+            "f1": 0.7432638535841383,
+            "support": 5060
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "non_sarcastic_0",
+            "sarcastic_1"
+          ],
+          "matrix": [
+            [
+              3820,
+              1120
+            ],
+            [
+              1405,
+              3655
+            ]
+          ]
+        },
+        "classification_report": {
+          "non_sarcastic": {
+            "precision": 0.7311004784688995,
+            "recall": 0.7732793522267206,
+            "f1-score": 0.7515986227250369,
+            "support": 4940.0
+          },
+          "sarcastic": {
+            "precision": 0.7654450261780105,
+            "recall": 0.7223320158102767,
+            "f1-score": 0.7432638535841383,
+            "support": 5060.0
+          },
+          "accuracy": 0.7475,
+          "macro avg": {
+            "precision": 0.7482727523234549,
+            "recall": 0.7478056840184987,
+            "f1-score": 0.7474312381545876,
+            "support": 10000.0
+          },
+          "weighted avg": {
+            "precision": 0.7484788196097096,
+            "recall": 0.7475,
+            "f1-score": 0.7473812295397422,
+            "support": 10000.0
+          }
+        },
+        "loss": 0.5195970235168934
+      }
+    }
+  ],
+  "duration_seconds": 2860.621171951294,
+  "output_dir": "/Users/samadi/Master AI/NLP/Sarcasm-Detection/models/roberta/versionA",
+  "metrics_path": "/Users/samadi/Master AI/NLP/Sarcasm-Detection/reports/task14/E03_RoBERTa_VersionA_metrics.json"
+}

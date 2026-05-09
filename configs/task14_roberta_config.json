@@ -1,0 +1,62 @@
+{
+  "task": "Task 14 - Train RoBERTa",
+  "project": "Sarcasm Detection from Social Media Text using the SARC Dataset",
+  "description": "Fine-tune RoBERTa on Version A and Version B using the same controlled design as BERTweet.",
+  "model_name": "roberta-base",
+  "num_labels": 2,
+  "label_mapping": {
+    "0": "non_sarcastic",
+    "1": "sarcastic"
+  },
+  "text_input": {
+    "strategy": "parent_comment_plus_comment",
+    "format": "Parent: <parent_comment> Reply: <comment>",
+    "note": "This remains text-only input and provides conversational context for sarcasm detection."
+  },
+  "training_args": {
+    "epochs": 1,
+    "batch_size": 8,
+    "gradient_accumulation_steps": 4,
+    "learning_rate": 0.00002,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 128,
+    "random_seed": 42,
+    "max_train_samples": 50000,
+    "max_valid_samples": 10000,
+    "log_every": 100
+  },
+  "selection_metric": "macro_f1",
+  "metrics": [
+    "accuracy",
+    "precision_macro",
+    "recall_macro",
+    "macro_f1",
+    "weighted_f1",
+    "confusion_matrix"
+  ],
+  "experiments": [
+    {
+      "id": "E03",
+      "name": "E03_RoBERTa_VersionA",
+      "model_family": "RoBERTa",
+      "dataset_version": "versionA",
+      "stopword_setting": "stopwords_kept",
+      "train_path": "data/splits/versionA/train.csv",
+      "valid_path": "data/splits/versionA/valid.csv",
+      "output_dir": "models/roberta/versionA",
+      "metrics_path": "reports/task14/E03_RoBERTa_VersionA_metrics.json"
+    },
+    {
+      "id": "E04",
+      "name": "E04_RoBERTa_VersionB",
+      "model_family": "RoBERTa",
+      "dataset_version": "versionB",
+      "stopword_setting": "stopwords_selectively_removed",
+      "train_path": "data/splits/versionB/train.csv",
+      "valid_path": "data/splits/versionB/valid.csv",
+      "output_dir": "models/roberta/versionB",
+      "metrics_path": "reports/task14/E04_RoBERTa_VersionB_metrics.json"
+    }
+  ]
+}

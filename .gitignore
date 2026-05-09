@@ -66,3 +66,7 @@ logs/
 reports/task13/*.tmp
 *.ckpt
 models/bertweet/
+# Local datasets and split files
+# Local trained model checkpoints
+models/roberta/
+# macOS artifacts
