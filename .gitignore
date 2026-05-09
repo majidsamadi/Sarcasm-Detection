@@ -44,3 +44,22 @@ reports/figures/*.png
 reports/figures/*.jpg
 reports/figures/*.pdf
 !reports/figures/.gitkeep
+# macOS / archive artifacts
+__MACOSX/
+# Python environment and cache
+*.pyc
+# Local dataset files - keep local, do not push to GitHub
+data/raw/*.csv
+data/raw/*.zip
+data/raw/*.gz
+data/processed/*.csv
+data/splits/**/*.csv
+data/splits/*.json
+# Model/checkpoint artifacts - keep local unless intentionally uploaded elsewhere
+models/**/*.bin
+models/**/*.pt
+models/**/*.pth
+models/**/*.safetensors
+models/**/checkpoint-*
+# Logs
+*.log
