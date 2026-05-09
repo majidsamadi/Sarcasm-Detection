@@ -1,0 +1,1 @@
+Streamlit Deploy button hidden for local presentation by updating .streamlit/config.toml with client.toolbarMode = "viewer". This removes developer deployment options from the top-right toolbar while keeping the demo app functional.
