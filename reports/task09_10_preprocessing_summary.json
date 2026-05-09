@@ -1,0 +1,112 @@
+{
+  "generated_at": "2026-05-09T10:25:12",
+  "project": "Sarcasm Detection using SARC",
+  "task": "Task 09-10 preprocessing versions A and B",
+  "version_a": {
+    "file": "data/processed/A.csv",
+    "description": "Cleaned dataset with stopwords kept; punctuation, casing, and ALL CAPS preserved.",
+    "shape": [
+      964513,
+      3
+    ],
+    "label_balance": {
+      "label_0": 479571,
+      "label_1": 484942
+    },
+    "token_filter": "kept rows <= 128 BERTweet tokens"
+  },
+  "version_b": {
+    "file": "data/processed/B.csv",
+    "description": "Version A with selective stopword removal; negation words preserved.",
+    "shape": [
+      964513,
+      3
+    ],
+    "label_balance": {
+      "label_0": 479571,
+      "label_1": 484942
+    }
+  },
+  "cleaning_steps": [
+    {
+      "step": "Drop null/empty comment rows",
+      "before": 1010826,
+      "after": 1010771,
+      "dropped": 55,
+      "label_0": 505403,
+      "label_1": 505368
+    },
+    {
+      "step": "Drop rows where comment contains URL/markdown hyperlink",
+      "before": 1010771,
+      "after": 1010564,
+      "dropped": 207,
+      "label_0": 505226,
+      "label_1": 505338
+    },
+    {
+      "step": "Drop [deleted]/[removed] comments",
+      "before": 1010564,
+      "after": 1010545,
+      "dropped": 19,
+      "label_0": 505211,
+      "label_1": 505334
+    },
+    {
+      "step": "Drop remaining underscore-italic rows in comment",
+      "before": 1010545,
+      "after": 1010312,
+      "dropped": 233,
+      "label_0": 505059,
+      "label_1": 505253
+    },
+    {
+      "step": "Drop spam/repetitive/single-character rows",
+      "before": 1010312,
+      "after": 1008680,
+      "dropped": 1632,
+      "label_0": 503619,
+      "label_1": 505061
+    },
+    {
+      "step": "Drop duplicate rows",
+      "before": 1008680,
+      "after": 1008071,
+      "dropped": 609,
+      "label_0": 503320,
+      "label_1": 504751
+    },
+    {
+      "step": "Drop remaining markdown hyperlink rows in comment",
+      "before": 1008071,
+      "after": 1008071,
+      "dropped": 0,
+      "label_0": 503320,
+      "label_1": 504751
+    },
+    {
+      "step": "Drop code block rows in comment",
+      "before": 1008071,
+      "after": 1008069,
+      "dropped": 2,
+      "label_0": 503319,
+      "label_1": 504750
+    },
+    {
+      "step": "Drop rows empty after final whitespace normalization",
+      "before": 1008069,
+      "after": 1008069,
+      "dropped": 0,
+      "label_0": 503319,
+      "label_1": 504750
+    },
+    {
+      "step": "Drop rows above 128 BERTweet tokens",
+      "before": 1008069,
+      "after": 964513,
+      "dropped": 43556,
+      "label_0": 479571,
+      "label_1": 484942
+    }
+  ]
+}

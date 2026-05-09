@@ -1,0 +1,1 @@
+Train/validation/test split completed for Version A and Version B using the same stratified 80/10/10 split with random seed 42. Class balance was preserved across splits, outputs were saved under data/splits/versionA and data/splits/versionB, and the split summary was documented in reports/task11_split_summary.md.

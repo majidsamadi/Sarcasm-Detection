@@ -13,3 +13,6 @@ ipykernel
 openpyxl
 tqdm
 streamlit
+kagglehub[pandas-datasets]
+emoji
+regex
