@@ -1,0 +1,163 @@
+{
+  "task_id": "12",
+  "status": "complete",
+  "validation_messages": [
+    "Experiment registry contains exactly four required experiments.",
+    "Experiment matrix covers BERTweet and RoBERTa across Version A and Version B.",
+    "Validated split files for versionA.",
+    "Validated split files for versionB.",
+    "Version A and Version B have matching row counts and label distributions for all splits."
+  ],
+  "split_summary": {
+    "versionA": {
+      "train": {
+        "path": "data/splits/versionA/train.csv",
+        "rows": 772069,
+        "label_counts": {
+          "0": 383897,
+          "1": 388172
+        },
+        "columns": [
+          "row_id",
+          "parent_comment",
+          "comment",
+          "label",
+          "model_text"
+        ],
+        "empty_comment_rows": 0,
+        "empty_parent_comment_rows": 0
+      },
+      "valid": {
+        "path": "data/splits/versionA/valid.csv",
+        "rows": 96509,
+        "label_counts": {
+          "0": 47987,
+          "1": 48522
+        },
+        "columns": [
+          "row_id",
+          "parent_comment",
+          "comment",
+          "label",
+          "model_text"
+        ],
+        "empty_comment_rows": 0,
+        "empty_parent_comment_rows": 0
+      },
+      "test": {
+        "path": "data/splits/versionA/test.csv",
+        "rows": 96509,
+        "label_counts": {
+          "0": 47987,
+          "1": 48522
+        },
+        "columns": [
+          "row_id",
+          "parent_comment",
+          "comment",
+          "label",
+          "model_text"
+        ],
+        "empty_comment_rows": 0,
+        "empty_parent_comment_rows": 0
+      }
+    },
+    "versionB": {
+      "train": {
+        "path": "data/splits/versionB/train.csv",
+        "rows": 772069,
+        "label_counts": {
+          "0": 383897,
+          "1": 388172
+        },
+        "columns": [
+          "row_id",
+          "parent_comment",
+          "comment",
+          "label",
+          "model_text"
+        ],
+        "empty_comment_rows": 1051,
+        "empty_parent_comment_rows": 484
+      },
+      "valid": {
+        "path": "data/splits/versionB/valid.csv",
+        "rows": 96509,
+        "label_counts": {
+          "0": 47987,
+          "1": 48522
+        },
+        "columns": [
+          "row_id",
+          "parent_comment",
+          "comment",
+          "label",
+          "model_text"
+        ],
+        "empty_comment_rows": 148,
+        "empty_parent_comment_rows": 63
+      },
+      "test": {
+        "path": "data/splits/versionB/test.csv",
+        "rows": 96509,
+        "label_counts": {
+          "0": 47987,
+          "1": 48522
+        },
+        "columns": [
+          "row_id",
+          "parent_comment",
+          "comment",
+          "label",
+          "model_text"
+        ],
+        "empty_comment_rows": 133,
+        "empty_parent_comment_rows": 65
+      }
+    }
+  },
+  "experiments": [
+    {
+      "experiment_id": "E01_BERTWEET_A",
+      "model_family": "BERTweet",
+      "huggingface_model": "vinai/bertweet-base",
+      "data_version": "versionA",
+      "stopword_setting": "kept",
+      "purpose": "Evaluate BERTweet when stopwords and sarcasm-related surface signals are preserved."
+    },
+    {
+      "experiment_id": "E02_BERTWEET_B",
+      "model_family": "BERTweet",
+      "huggingface_model": "vinai/bertweet-base",
+      "data_version": "versionB",
+      "stopword_setting": "selectively_removed",
+      "purpose": "Evaluate whether selective stopword removal improves or hurts BERTweet performance."
+    },
+    {
+      "experiment_id": "E03_ROBERTA_A",
+      "model_family": "RoBERTa",
+      "huggingface_model": "roberta-base",
+      "data_version": "versionA",
+      "stopword_setting": "kept",
+      "purpose": "Evaluate RoBERTa when stopwords and sarcasm-related surface signals are preserved."
+    },
+    {
+      "experiment_id": "E04_ROBERTA_B",
+      "model_family": "RoBERTa",
+      "huggingface_model": "roberta-base",
+      "data_version": "versionB",
+      "stopword_setting": "selectively_removed",
+      "purpose": "Evaluate whether selective stopword removal improves or hurts RoBERTa performance."
+    }
+  ],
+  "model_selection_rule": {
+    "primary_metric": "f1_score",
+    "secondary_checks": [
+      "precision",
+      "recall",
+      "confusion_matrix",
+      "error_analysis"
+    ],
+    "final_demo_rule": "Train and compare all four experiments, but deploy only the best-performing model in the final interface."
+  }
+}

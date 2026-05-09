@@ -1,0 +1,107 @@
+{
+  "project": "Sarcasm Detection from Social Media Text using the SARC Dataset",
+  "task_id": "12",
+  "task_name": "Model Experiment Design",
+  "task_type": "Binary text classification",
+  "objective": "Design a fair, reproducible comparison between BERTweet and RoBERTa under two preprocessing settings: stopwords kept and selective stopword removal.",
+  "target_label": {
+    "column": "label",
+    "positive_class": 1,
+    "negative_class": 0,
+    "positive_meaning": "sarcastic",
+    "negative_meaning": "non_sarcastic"
+  },
+  "input_strategy": {
+    "type": "text_only_context_pair",
+    "primary_text_column": "comment",
+    "context_text_column": "parent_comment",
+    "description": "Use only textual content. No metadata is used. The parent_comment is treated as textual context and comment is treated as the target reply. During tokenization, these should be passed as a text pair where possible."
+  },
+  "data_versions": {
+    "versionA": {
+      "name": "Version A - stopwords kept",
+      "description": "Preprocessing Version A keeps stopwords, punctuation, casing, and ALL CAPS to preserve sarcasm signals.",
+      "split_folder": "data/splits/versionA"
+    },
+    "versionB": {
+      "name": "Version B - selective stopword removal",
+      "description": "Preprocessing Version B removes common stopwords while preserving negation words such as not, no, never, don't, doesn't, didn't.",
+      "split_folder": "data/splits/versionB"
+    }
+  },
+  "split_design": {
+    "train_ratio": 0.80,
+    "validation_ratio": 0.10,
+    "test_ratio": 0.10,
+    "split_type": "stratified",
+    "random_seed": 42,
+    "rule": "Use exactly the same split indices for Version A and Version B so that stopword impact is compared fairly."
+  },
+  "tokenization_design": {
+    "max_length": 128,
+    "padding": "max_length",
+    "truncation": true,
+    "rule": "Use each model's official Hugging Face tokenizer. Do not manually remove punctuation during tokenization."
+  },
+  "training_design": {
+    "epochs": 3,
+    "batch_size": 16,
+    "learning_rate": 0.00002,
+    "weight_decay": 0.01,
+    "evaluation_strategy": "per_epoch",
+    "early_stopping": "optional_if_validation_f1_stops_improving",
+    "seed": 42,
+    "note": "These are default experimental settings. They can be tuned later if hardware limits require smaller batch size."
+  },
+  "metrics": [
+    "accuracy",
+    "precision",
+    "recall",
+    "f1_score",
+    "confusion_matrix"
+  ],
+  "model_selection_rule": {
+    "primary_metric": "f1_score",
+    "secondary_checks": ["precision", "recall", "confusion_matrix", "error_analysis"],
+    "final_demo_rule": "Train and compare all four experiments, but deploy only the best-performing model in the final interface."
+  },
+  "experiments": [
+    {
+      "experiment_id": "E01_BERTWEET_A",
+      "model_family": "BERTweet",
+      "huggingface_model": "vinai/bertweet-base",
+      "data_version": "versionA",
+      "stopword_setting": "kept",
+      "purpose": "Evaluate BERTweet when stopwords and sarcasm-related surface signals are preserved."
+    },
+    {
+      "experiment_id": "E02_BERTWEET_B",
+      "model_family": "BERTweet",
+      "huggingface_model": "vinai/bertweet-base",
+      "data_version": "versionB",
+      "stopword_setting": "selectively_removed",
+      "purpose": "Evaluate whether selective stopword removal improves or hurts BERTweet performance."
+    },
+    {
+      "experiment_id": "E03_ROBERTA_A",
+      "model_family": "RoBERTa",
+      "huggingface_model": "roberta-base",
+      "data_version": "versionA",
+      "stopword_setting": "kept",
+      "purpose": "Evaluate RoBERTa when stopwords and sarcasm-related surface signals are preserved."
+    },
+    {
+      "experiment_id": "E04_ROBERTA_B",
+      "model_family": "RoBERTa",
+      "huggingface_model": "roberta-base",
+      "data_version": "versionB",
+      "stopword_setting": "selectively_removed",
+      "purpose": "Evaluate whether selective stopword removal improves or hurts RoBERTa performance."
+    }
+  ],
+  "academic_rationale": {
+    "why_two_models": "BERTweet is specialized for social media text, while RoBERTa is a strong general transformer baseline. Comparing them helps determine whether social-media pretraining improves sarcasm detection on SARC.",
+    "why_two_preprocessing_versions": "The lecturer requested checking whether removing stopwords helps or hurts. Sarcasm may depend on small words and sentence structure, so the effect must be tested rather than assumed.",
+    "why_one_final_model": "The final application should be simple and reproducible. After fair comparison, only the best-performing model will be selected for the final demo."
+  }
+}

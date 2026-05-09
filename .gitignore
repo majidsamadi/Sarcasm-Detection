@@ -11,13 +11,11 @@ __pycache__/
 .venv/
 venv/
 env/
-
 # OS/editor files
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
-
 # Large local data files - do not push datasets to GitHub
 data/raw/*
 data/processed/*
@@ -29,7 +27,6 @@ data/splits/*
 !data/splits/versionA/.gitkeep
 !data/splits/versionB/
 !data/splits/versionB/.gitkeep
-
 # Model outputs - usually too large for GitHub
 models/*
 !models/.gitkeep
@@ -38,7 +35,6 @@ models/*
 *.bin
 *.safetensors
 checkpoint-*/
-
 # Reports generated locally
 reports/figures/*.png
 reports/figures/*.jpg
@@ -63,3 +59,5 @@ models/**/*.safetensors
 models/**/checkpoint-*
 # Logs
 *.log
+# Local dataset and split files - keep local, do not push
+models/**
