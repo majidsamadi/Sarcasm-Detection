@@ -1,0 +1,22 @@
+{
+  "selected_experiment_id": "E03_RoBERTa_VersionA",
+  "model_family": "RoBERTa",
+  "checkpoint_path": "models/roberta/versionA",
+  "tokenizer_name": "roberta-base",
+  "dataset_version": "Version A",
+  "preprocessing": "Stopwords kept",
+  "input_format": "parent_comment + comment",
+  "max_length": 128,
+  "labels": {
+    "0": "non-sarcastic",
+    "1": "sarcastic"
+  },
+  "metrics": {
+    "accuracy": 0.722284968241304,
+    "macro_precision": 0.7430131550757031,
+    "macro_recall": 0.7230856801312752,
+    "macro_f1": 0.7166978860458602,
+    "weighted_f1": 0.7164773379034147
+  },
+  "not_intended_for": "Automatic removal, flagging, punishment, or moderation of user content."
+}

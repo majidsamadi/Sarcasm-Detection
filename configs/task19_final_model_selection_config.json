@@ -1,0 +1,56 @@
+{
+  "task": "Task 19 - Final Model Selection",
+  "selection_metric": "macro_f1",
+  "tie_breaker_metric": "accuracy",
+  "selection_rule": "Select the model with the highest held-out test macro-F1. If tied, select the model with higher accuracy. Use error analysis to support the final decision.",
+  "input_format": "parent_comment + comment",
+  "max_length": 128,
+  "labels": {
+    "0": "non-sarcastic",
+    "1": "sarcastic"
+  },
+  "experiments": [
+    {
+      "experiment_id": "E01_BERTweet_VersionA",
+      "model_family": "BERTweet",
+      "dataset_version": "Version A",
+      "preprocessing": "Stopwords kept",
+      "metrics_file": "reports/task15/E01_BERTweet_VersionA_test_metrics.json",
+      "checkpoint_path": "models/bertweet/versionA",
+      "tokenizer_name": "vinai/bertweet-base"
+    },
+    {
+      "experiment_id": "E02_BERTweet_VersionB",
+      "model_family": "BERTweet",
+      "dataset_version": "Version B",
+      "preprocessing": "Selective stopword removal",
+      "metrics_file": "reports/task15/E02_BERTweet_VersionB_test_metrics.json",
+      "checkpoint_path": "models/bertweet/versionB",
+      "tokenizer_name": "vinai/bertweet-base"
+    },
+    {
+      "experiment_id": "E03_RoBERTa_VersionA",
+      "model_family": "RoBERTa",
+      "dataset_version": "Version A",
+      "preprocessing": "Stopwords kept",
+      "metrics_file": "reports/task15/E03_RoBERTa_VersionA_test_metrics.json",
+      "checkpoint_path": "models/roberta/versionA",
+      "tokenizer_name": "roberta-base"
+    },
+    {
+      "experiment_id": "E04_RoBERTa_VersionB",
+      "model_family": "RoBERTa",
+      "dataset_version": "Version B",
+      "preprocessing": "Selective stopword removal",
+      "metrics_file": "reports/task15/E04_RoBERTa_VersionB_test_metrics.json",
+      "checkpoint_path": "models/roberta/versionB",
+      "tokenizer_name": "roberta-base"
+    }
+  ],
+  "supporting_reports": {
+    "model_evaluation": "reports/task15/task15_model_evaluation_summary.md",
+    "stopword_impact": "reports/task16/task16_stopword_impact_summary.md",
+    "model_comparison": "reports/task17/task17_model_comparison_summary.md",
+    "error_analysis": "reports/task18/task18_error_analysis_summary.md"
+  }
+}

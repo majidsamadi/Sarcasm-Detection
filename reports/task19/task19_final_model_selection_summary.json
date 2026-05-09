@@ -1,0 +1,84 @@
+{
+  "task": "Task 19 - Final Model Selection",
+  "selection_metric": "macro_f1",
+  "tie_breaker_metric": "accuracy",
+  "selected_experiment": {
+    "experiment_id": "E03_RoBERTa_VersionA",
+    "model_family": "RoBERTa",
+    "dataset_version": "Version A",
+    "preprocessing": "Stopwords kept",
+    "checkpoint_path": "models/roberta/versionA",
+    "tokenizer_name": "roberta-base",
+    "accuracy": 0.722284968241304,
+    "macro_precision": 0.7430131550757031,
+    "macro_recall": 0.7230856801312752,
+    "macro_f1": 0.7166978860458602,
+    "weighted_f1": 0.7164773379034147,
+    "source_metrics_file": "reports/task15/E03_RoBERTa_VersionA_test_metrics.json"
+  },
+  "ranked_results": [
+    {
+      "experiment_id": "E03_RoBERTa_VersionA",
+      "model_family": "RoBERTa",
+      "dataset_version": "Version A",
+      "preprocessing": "Stopwords kept",
+      "checkpoint_path": "models/roberta/versionA",
+      "tokenizer_name": "roberta-base",
+      "accuracy": 0.722284968241304,
+      "macro_precision": 0.7430131550757031,
+      "macro_recall": 0.7230856801312752,
+      "macro_f1": 0.7166978860458602,
+      "weighted_f1": 0.7164773379034147,
+      "source_metrics_file": "reports/task15/E03_RoBERTa_VersionA_test_metrics.json"
+    },
+    {
+      "experiment_id": "E04_RoBERTa_VersionB",
+      "model_family": "RoBERTa",
+      "dataset_version": "Version B",
+      "preprocessing": "Selective stopword removal",
+      "checkpoint_path": "models/roberta/versionB",
+      "tokenizer_name": "roberta-base",
+      "accuracy": 0.6772632604213079,
+      "macro_precision": 0.7105745415737303,
+      "macro_recall": 0.678353074216452,
+      "macro_f1": 0.6647991220259012,
+      "weighted_f1": 0.6644408031628414,
+      "source_metrics_file": "reports/task15/E04_RoBERTa_VersionB_test_metrics.json"
+    },
+    {
+      "experiment_id": "E01_BERTweet_VersionA",
+      "model_family": "BERTweet",
+      "dataset_version": "Version A",
+      "preprocessing": "Stopwords kept",
+      "checkpoint_path": "models/bertweet/versionA",
+      "tokenizer_name": "vinai/bertweet-base",
+      "accuracy": 0.5091649483467863,
+      "macro_precision": 0.6637904226416149,
+      "macro_recall": 0.5118350599513822,
+      "macro_f1": 0.3631522089668446,
+      "weighted_f1": 0.36146177128819085,
+      "source_metrics_file": "reports/task15/E01_BERTweet_VersionA_test_metrics.json"
+    },
+    {
+      "experiment_id": "E02_BERTweet_VersionB",
+      "model_family": "BERTweet",
+      "dataset_version": "Version B",
+      "preprocessing": "Selective stopword removal",
+      "checkpoint_path": "models/bertweet/versionB",
+      "tokenizer_name": "vinai/bertweet-base",
+      "accuracy": 0.5018288449781886,
+      "macro_precision": 0.6402686542531336,
+      "macro_recall": 0.5045553691981279,
+      "macro_f1": 0.34523313940821915,
+      "weighted_f1": 0.3434580540748307,
+      "source_metrics_file": "reports/task15/E02_BERTweet_VersionB_test_metrics.json"
+    }
+  ],
+  "supporting_reports": {
+    "model_evaluation": "reports/task15/task15_model_evaluation_summary.md",
+    "stopword_impact": "reports/task16/task16_stopword_impact_summary.md",
+    "model_comparison": "reports/task17/task17_model_comparison_summary.md",
+    "error_analysis": "reports/task18/task18_error_analysis_summary.md"
+  },
+  "final_model_config_path": "configs/final_model_config.json"
+}

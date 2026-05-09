@@ -1,0 +1,5 @@
+rank,experiment_id,model_family,dataset_version,preprocessing,accuracy,macro_precision,macro_recall,macro_f1,weighted_f1,checkpoint_path
+1,E03_RoBERTa_VersionA,RoBERTa,Version A,Stopwords kept,0.722285,0.743013,0.723086,0.716698,0.716477,models/roberta/versionA
+2,E04_RoBERTa_VersionB,RoBERTa,Version B,Selective stopword removal,0.677263,0.710575,0.678353,0.664799,0.664441,models/roberta/versionB
+3,E01_BERTweet_VersionA,BERTweet,Version A,Stopwords kept,0.509165,0.663790,0.511835,0.363152,0.361462,models/bertweet/versionA
+4,E02_BERTweet_VersionB,BERTweet,Version B,Selective stopword removal,0.501829,0.640269,0.504555,0.345233,0.343458,models/bertweet/versionB
