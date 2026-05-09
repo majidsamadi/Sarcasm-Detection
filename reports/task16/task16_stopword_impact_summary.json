@@ -1,0 +1,98 @@
+{
+  "task": "Task 16: Stopword Impact Analysis",
+  "metric_priority": "macro_f1",
+  "metrics": {
+    "E01_BERTweet_VersionA": {
+      "experiment": "E01_BERTweet_VersionA",
+      "model_family": "BERTweet",
+      "version": "versionA",
+      "stopword_setting": "stopwords kept",
+      "accuracy": 0.5091649483467863,
+      "macro_precision": 0.6637904226416149,
+      "macro_recall": 0.5118350599513822,
+      "macro_f1": 0.3631522089668446,
+      "weighted_f1": 0.36146177128819085,
+      "rows": 96509,
+      "source_file": "reports/task15/E01_BERTweet_VersionA_test_metrics.json"
+    },
+    "E02_BERTweet_VersionB": {
+      "experiment": "E02_BERTweet_VersionB",
+      "model_family": "BERTweet",
+      "version": "versionB",
+      "stopword_setting": "stopwords selectively removed",
+      "accuracy": 0.5018288449781886,
+      "macro_precision": 0.6402686542531336,
+      "macro_recall": 0.5045553691981279,
+      "macro_f1": 0.34523313940821915,
+      "weighted_f1": 0.3434580540748307,
+      "rows": 96509,
+      "source_file": "reports/task15/E02_BERTweet_VersionB_test_metrics.json"
+    },
+    "E03_RoBERTa_VersionA": {
+      "experiment": "E03_RoBERTa_VersionA",
+      "model_family": "RoBERTa",
+      "version": "versionA",
+      "stopword_setting": "stopwords kept",
+      "accuracy": 0.722284968241304,
+      "macro_precision": 0.7430131550757031,
+      "macro_recall": 0.7230856801312752,
+      "macro_f1": 0.7166978860458602,
+      "weighted_f1": 0.7164773379034147,
+      "rows": 96509,
+      "source_file": "reports/task15/E03_RoBERTa_VersionA_test_metrics.json"
+    },
+    "E04_RoBERTa_VersionB": {
+      "experiment": "E04_RoBERTa_VersionB",
+      "model_family": "RoBERTa",
+      "version": "versionB",
+      "stopword_setting": "stopwords selectively removed",
+      "accuracy": 0.6772632604213079,
+      "macro_precision": 0.7105745415737303,
+      "macro_recall": 0.678353074216452,
+      "macro_f1": 0.6647991220259012,
+      "weighted_f1": 0.6644408031628414,
+      "rows": 96509,
+      "source_file": "reports/task15/E04_RoBERTa_VersionB_test_metrics.json"
+    }
+  },
+  "comparisons": [
+    {
+      "model_family": "BERTweet",
+      "kept_experiment": "E01_BERTweet_VersionA",
+      "removed_experiment": "E02_BERTweet_VersionB",
+      "kept_accuracy": 0.5091649483467863,
+      "removed_accuracy": 0.5018288449781886,
+      "accuracy_delta_kept_minus_removed": 0.007336103368597691,
+      "kept_macro_f1": 0.3631522089668446,
+      "removed_macro_f1": 0.34523313940821915,
+      "macro_f1_delta_kept_minus_removed": 0.017919069558625433,
+      "conclusion": "Keeping stopwords performed better."
+    },
+    {
+      "model_family": "RoBERTa",
+      "kept_experiment": "E03_RoBERTa_VersionA",
+      "removed_experiment": "E04_RoBERTa_VersionB",
+      "kept_accuracy": 0.722284968241304,
+      "removed_accuracy": 0.6772632604213079,
+      "accuracy_delta_kept_minus_removed": 0.04502170781999604,
+      "kept_macro_f1": 0.7166978860458602,
+      "removed_macro_f1": 0.6647991220259012,
+      "macro_f1_delta_kept_minus_removed": 0.051898764019958965,
+      "conclusion": "Keeping stopwords performed better."
+    }
+  ],
+  "best_experiment": {
+    "experiment": "E03_RoBERTa_VersionA",
+    "model_family": "RoBERTa",
+    "version": "versionA",
+    "stopword_setting": "stopwords kept",
+    "accuracy": 0.722284968241304,
+    "macro_precision": 0.7430131550757031,
+    "macro_recall": 0.7230856801312752,
+    "macro_f1": 0.7166978860458602,
+    "weighted_f1": 0.7164773379034147,
+    "rows": 96509,
+    "source_file": "reports/task15/E03_RoBERTa_VersionA_test_metrics.json"
+  },
+  "recommendation": "Keep stopwords for the final model if Version A has the highest macro-F1."
+}

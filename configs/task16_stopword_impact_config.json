@@ -1,0 +1,42 @@
+{
+  "task_number": 16,
+  "task_name": "Stopword Impact Analysis",
+  "project_task": "Binary sarcasm classification",
+  "labels": {
+    "0": "non-sarcastic",
+    "1": "sarcastic"
+  },
+  "input_format": "text-only input using parent_comment + comment when both are available",
+  "metric_priority": [
+    "macro_f1",
+    "accuracy",
+    "macro_precision",
+    "macro_recall",
+    "weighted_f1"
+  ],
+  "comparison_pairs": [
+    {
+      "model_family": "BERTweet",
+      "stopwords_kept_experiment": "E01_BERTweet_VersionA",
+      "stopwords_removed_experiment": "E02_BERTweet_VersionB"
+    },
+    {
+      "model_family": "RoBERTa",
+      "stopwords_kept_experiment": "E03_RoBERTa_VersionA",
+      "stopwords_removed_experiment": "E04_RoBERTa_VersionB"
+    }
+  ],
+  "source_metric_files": {
+    "E01_BERTweet_VersionA": "reports/task15/E01_BERTweet_VersionA_test_metrics.json",
+    "E02_BERTweet_VersionB": "reports/task15/E02_BERTweet_VersionB_test_metrics.json",
+    "E03_RoBERTa_VersionA": "reports/task15/E03_RoBERTa_VersionA_test_metrics.json",
+    "E04_RoBERTa_VersionB": "reports/task15/E04_RoBERTa_VersionB_test_metrics.json"
+  },
+  "output_files": {
+    "summary_markdown": "reports/task16/task16_stopword_impact_summary.md",
+    "summary_json": "reports/task16/task16_stopword_impact_summary.json",
+    "progress_note": "reports/task16/task16_progress_note.txt",
+    "macro_f1_figure": "reports/task16/figures/stopword_macro_f1_comparison.png",
+    "accuracy_figure": "reports/task16/figures/stopword_accuracy_comparison.png"
+  }
+}
