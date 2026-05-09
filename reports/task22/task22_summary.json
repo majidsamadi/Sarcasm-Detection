@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-05-10T00:21:23",
+  "final_model": "E03_RoBERTa_VersionA",
+  "final_model_accuracy": 0.7223,
+  "final_model_macro_f1": 0.7167,
+  "tasks_documented": [
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "20B",
+    "21",
+    "22"
+  ],
+  "outputs": [
+    "reports/final_report/UM_WQF7007_Sarcasm_Detection_Final_Report.md",
+    "reports/final_report/technical_implementation_log.md",
+    "reports/final_report/final_report_sources_index.md",
+    "reports/final_report/task_completion_matrix.md",
+    "reports/final_report/presentation_key_points.md",
+    "docs/task22_final_report_writing.md",
+    "reports/task22/README.md",
+    "reports/task22/task22_progress_note.txt"
+  ]
+}

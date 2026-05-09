@@ -1,0 +1,19 @@
+# Task Completion Matrix
+
+| Task | Activity | Status | Summary |
+| --- | --- | --- | --- |
+| 09 | Preprocessing Version A | Completed | Reproduced teammate preprocessing exactly and generated A.csv with stopwords kept. |
+| 10 | Preprocessing Version B | Completed | Generated B.csv by selectively removing stopwords while preserving negation words. |
+| 11 | Train/Validation/Test Split | Completed | Created stratified 80/10/10 splits for Version A and Version B using the same random seed. |
+| 12 | Model Experiment Design | Completed | Defined four controlled experiments across two models and two preprocessing versions. |
+| 13 | Train BERTweet | Completed | Fine-tuned BERTweet on Version A and Version B. |
+| 14 | Train RoBERTa | Completed | Fine-tuned RoBERTa on Version A and Version B. |
+| 15 | Model Evaluation | Completed | Evaluated all four experiments on the held-out test set with accuracy, precision, recall, F1, and confusion matrices. |
+| 16 | Stopword Impact Analysis | Completed | Compared Version A and Version B to determine whether stopword removal helped or reduced performance. |
+| 17 | Model Comparison | Completed | Ranked the four experiments mainly by held-out test macro-F1. |
+| 18 | Error Analysis | Completed | Analyzed false positives, false negatives, confidence patterns, text length, and surface features for the best model. |
+| 19 | Final Model Selection | Completed | Selected RoBERTa Version A as the final model based mainly on test macro-F1. |
+| 20 | Demo Interface | Completed | Created a Streamlit prediction demo using the selected local checkpoint. |
+| 20B | Enhanced Interactive Dashboard | Completed | Created a fuller Streamlit dashboard showing workflow progress, reports, results, and demo. |
+| 21 | Ethics and Limitations | Completed | Generated a risk register, responsible-use checklist, and ethics/limitations documentation. |
+| 22 | Final Report Writing | Completed by this script | Generated full academic documentation from the completed project outputs. |
