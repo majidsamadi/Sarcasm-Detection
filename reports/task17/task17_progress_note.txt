@@ -1,0 +1,1 @@
+Model comparison completed for all four experiments using held-out test metrics. The best model is E03_RoBERTa_VersionA with accuracy 0.7223 and macro-F1 0.7167. Results, ranked comparison table, JSON summary, and comparison figures were saved under reports/task17.

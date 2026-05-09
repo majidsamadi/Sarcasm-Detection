@@ -1,0 +1,113 @@
+{
+  "selection_metric": "macro_f1",
+  "secondary_metric": "accuracy",
+  "best_experiment": {
+    "experiment_id": "E03_RoBERTa_VersionA",
+    "short_id": "E03",
+    "model": "RoBERTa",
+    "model_family": "RoBERTa",
+    "dataset_version": "Version A",
+    "preprocessing": "Stopwords kept",
+    "accuracy": 0.7223,
+    "macro_precision": 0.743,
+    "macro_recall": 0.7231,
+    "macro_f1": 0.7167,
+    "weighted_f1": 0.7165,
+    "rows_evaluated": 96509,
+    "metrics_path": "reports/task15/E03_RoBERTa_VersionA_test_metrics.json"
+  },
+  "ranked_results": [
+    {
+      "experiment_id": "E03_RoBERTa_VersionA",
+      "short_id": "E03",
+      "model": "RoBERTa",
+      "model_family": "RoBERTa",
+      "dataset_version": "Version A",
+      "preprocessing": "Stopwords kept",
+      "accuracy": 0.7223,
+      "macro_precision": 0.743,
+      "macro_recall": 0.7231,
+      "macro_f1": 0.7167,
+      "weighted_f1": 0.7165,
+      "rows_evaluated": 96509,
+      "metrics_path": "reports/task15/E03_RoBERTa_VersionA_test_metrics.json"
+    },
+    {
+      "experiment_id": "E04_RoBERTa_VersionB",
+      "short_id": "E04",
+      "model": "RoBERTa",
+      "model_family": "RoBERTa",
+      "dataset_version": "Version B",
+      "preprocessing": "Selective stopword removal",
+      "accuracy": 0.6773,
+      "macro_precision": 0.7106,
+      "macro_recall": 0.6784,
+      "macro_f1": 0.6648,
+      "weighted_f1": 0.6644,
+      "rows_evaluated": 96509,
+      "metrics_path": "reports/task15/E04_RoBERTa_VersionB_test_metrics.json"
+    },
+    {
+      "experiment_id": "E01_BERTweet_VersionA",
+      "short_id": "E01",
+      "model": "BERTweet",
+      "model_family": "BERTweet",
+      "dataset_version": "Version A",
+      "preprocessing": "Stopwords kept",
+      "accuracy": 0.5092,
+      "macro_precision": 0.6638,
+      "macro_recall": 0.5118,
+      "macro_f1": 0.3632,
+      "weighted_f1": 0.3615,
+      "rows_evaluated": 96509,
+      "metrics_path": "reports/task15/E01_BERTweet_VersionA_test_metrics.json"
+    },
+    {
+      "experiment_id": "E02_BERTweet_VersionB",
+      "short_id": "E02",
+      "model": "BERTweet",
+      "model_family": "BERTweet",
+      "dataset_version": "Version B",
+      "preprocessing": "Selective stopword removal",
+      "accuracy": 0.5018,
+      "macro_precision": 0.6403,
+      "macro_recall": 0.5046,
+      "macro_f1": 0.3452,
+      "weighted_f1": 0.3435,
+      "rows_evaluated": 96509,
+      "metrics_path": "reports/task15/E02_BERTweet_VersionB_test_metrics.json"
+    }
+  ],
+  "model_family_summary": {
+    "BERTweet": {
+      "best_experiment": "E01_BERTweet_VersionA",
+      "best_version": "Version A",
+      "best_preprocessing": "Stopwords kept",
+      "best_macro_f1": 0.3632,
+      "best_accuracy": 0.5092
+    },
+    "RoBERTa": {
+      "best_experiment": "E03_RoBERTa_VersionA",
+      "best_version": "Version A",
+      "best_preprocessing": "Stopwords kept",
+      "best_macro_f1": 0.7167,
+      "best_accuracy": 0.7223
+    }
+  },
+  "preprocessing_summary": [
+    {
+      "model": "BERTweet",
+      "version_a_macro_f1": 0.3632,
+      "version_b_macro_f1": 0.3452,
+      "delta_a_minus_b": 0.018,
+      "preferred_preprocessing": "Version A - stopwords kept"
+    },
+    {
+      "model": "RoBERTa",
+      "version_a_macro_f1": 0.7167,
+      "version_b_macro_f1": 0.6648,
+      "delta_a_minus_b": 0.0519,
+      "preferred_preprocessing": "Version A - stopwords kept"
+    }
+  ]
+}

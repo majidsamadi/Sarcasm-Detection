@@ -1,0 +1,53 @@
+{
+  "task": "Task 17 - Model Comparison",
+  "selection_metric": "macro_f1",
+  "secondary_metric": "accuracy",
+  "notes": [
+    "Compare the four controlled experiments generated in Task 12 and evaluated in Task 15.",
+    "Use held-out test-set metrics from Task 15, not validation metrics from training.",
+    "Select the final model mainly by test macro-F1, with accuracy and error analysis as supporting evidence.",
+    "This task does not train or evaluate models again; it consolidates and interprets completed evaluation outputs."
+  ],
+  "experiments": [
+    {
+      "experiment_id": "E01_BERTweet_VersionA",
+      "short_id": "E01",
+      "model": "BERTweet",
+      "model_family": "BERTweet",
+      "dataset_version": "Version A",
+      "preprocessing": "Stopwords kept",
+      "metrics_path": "reports/task15/E01_BERTweet_VersionA_test_metrics.json",
+      "classification_report_path": "reports/task15/E01_BERTweet_VersionA_classification_report.txt"
+    },
+    {
+      "experiment_id": "E02_BERTweet_VersionB",
+      "short_id": "E02",
+      "model": "BERTweet",
+      "model_family": "BERTweet",
+      "dataset_version": "Version B",
+      "preprocessing": "Selective stopword removal",
+      "metrics_path": "reports/task15/E02_BERTweet_VersionB_test_metrics.json",
+      "classification_report_path": "reports/task15/E02_BERTweet_VersionB_classification_report.txt"
+    },
+    {
+      "experiment_id": "E03_RoBERTa_VersionA",
+      "short_id": "E03",
+      "model": "RoBERTa",
+      "model_family": "RoBERTa",
+      "dataset_version": "Version A",
+      "preprocessing": "Stopwords kept",
+      "metrics_path": "reports/task15/E03_RoBERTa_VersionA_test_metrics.json",
+      "classification_report_path": "reports/task15/E03_RoBERTa_VersionA_classification_report.txt"
+    },
+    {
+      "experiment_id": "E04_RoBERTa_VersionB",
+      "short_id": "E04",
+      "model": "RoBERTa",
+      "model_family": "RoBERTa",
+      "dataset_version": "Version B",
+      "preprocessing": "Selective stopword removal",
+      "metrics_path": "reports/task15/E04_RoBERTa_VersionB_test_metrics.json",
+      "classification_report_path": "reports/task15/E04_RoBERTa_VersionB_classification_report.txt"
+    }
+  ]
+}
