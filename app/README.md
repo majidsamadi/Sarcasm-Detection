@@ -1,46 +1,36 @@
-# Demo Interfaces
+# Application Interfaces
 
-This folder contains two Streamlit interfaces for the sarcasm detection project.
+This project now uses **Gradio** as the primary stakeholder-facing interface.
 
-## 1. Basic Demo
+## Primary Interface: Gradio Dashboard
 
-File:
+Run locally:
+
+```bash
+bash run_gradio_dashboard.sh
+```
+
+Main file:
+
+```text
+app/gradio_app.py
+```
+
+Hugging Face Spaces entry point:
+
+```text
+app.py
+```
+
+The Gradio dashboard includes live prediction, project workflow status, model comparison, stopword impact charts, report exploration, error analysis, ethics notes, and optional local task execution.
+
+## Legacy Interface: Streamlit
+
+The earlier Streamlit files are kept as reference/local backup files:
 
 ```text
 app/streamlit_app.py
-```
-
-Run:
-
-```bash
-bash run_task20_demo.sh
-```
-
-Purpose: simple prediction demo using the selected final model.
-
-## 2. Enhanced Interactive Dashboard
-
-File:
-
-```text
 app/enhanced_dashboard.py
 ```
 
-Run:
-
-```bash
-bash run_enhanced_dashboard.sh
-```
-
-Purpose: complete AI/NLP workflow dashboard showing:
-
-- pipeline status
-- local task runner
-- live sarcasm prediction
-- model comparison
-- stopword impact analysis
-- reports explorer
-- error analysis
-- Hugging Face hosting readiness
-
-Important: the task-runner section is intended for local use. For public Hugging Face hosting, heavy training execution should be disabled or avoided.
+For stakeholder presentation and hosting, use the Gradio dashboard.

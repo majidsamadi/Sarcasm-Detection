@@ -98,3 +98,6 @@ reports/task21/local_only/**
 reports/final_report/local_only/**
 # Local data/model/runtime artifacts
 reports/**/local_only/**
+# Gradio/local UI runtime artifacts
+.gradio/
+reports/task23/local_only/

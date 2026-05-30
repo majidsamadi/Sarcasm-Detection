@@ -17,3 +17,4 @@ kagglehub[pandas-datasets]
 emoji
 regex
 seaborn
+gradio
