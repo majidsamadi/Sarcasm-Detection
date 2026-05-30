@@ -105,3 +105,4 @@ reports/ui_runs/**
 reports/task23/local_only/**
 reports/task23b/local_only/**
 .gradio/**
+reports/task23c/local_only/**

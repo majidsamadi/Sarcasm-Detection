@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Polished Gradio interface for the sarcasm detection NLP project.
 
-This app makes Gradio the primary stakeholder-facing interface.
-It focuses on clear presentation, readable cards, compact metrics, and a
-complete interactive project walkthrough.
+Task 23C fixes the previous Gradio UI problems:
+- readable typography and colors
+- no raw JSON/config dumps in visible cards
+- stable Results tab without matplotlib crashes
+- clean light dashboard layout
+- stakeholder-facing interface with Gradio as the primary UI
 """
 
 from __future__ import annotations
@@ -16,10 +19,9 @@ import sys
 import time
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 import gradio as gr
-import matplotlib.pyplot as plt
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -34,27 +36,34 @@ except Exception as exc:  # pragma: no cover
 else:
     PREDICTOR_IMPORT_ERROR = None
 
-APP_TITLE = "Sarcasm Detection NLP Lab"
+APP_TITLE = "Sarcasm Detection NLP Dashboard"
 FINAL_CONFIG_PATH = PROJECT_ROOT / "configs" / "final_model_config.json"
 UI_RUNS_DIR = PROJECT_ROOT / "reports" / "ui_runs"
 UI_RUNS_DIR.mkdir(parents=True, exist_ok=True)
 
 TASKS: List[Dict[str, Any]] = [
-    {"id": "T09", "title": "Preprocessing Version A", "stage": "Data", "runner": "run_task09_10_exact.sh", "heavy": True, "outputs": ["data/processed/A.csv"]},
-    {"id": "T10", "title": "Preprocessing Version B", "stage": "Data", "runner": "run_task09_10_exact.sh", "heavy": True, "outputs": ["data/processed/B.csv"]},
-    {"id": "T11", "title": "Train/Validation/Test Split", "stage": "Data", "runner": "run_task11_splits.sh", "heavy": False, "outputs": ["reports/task11_split_summary.md"]},
-    {"id": "T12", "title": "Experiment Design", "stage": "Methodology", "runner": "run_task12_experiment_design.sh", "heavy": False, "outputs": ["configs/task12_experiment_design.json"]},
-    {"id": "T13", "title": "Train BERTweet", "stage": "Training", "runner": "run_task13_train_bertweet.sh", "heavy": True, "outputs": ["reports/task13/E01_BERTweet_VersionA_metrics.json", "reports/task13/E02_BERTweet_VersionB_metrics.json"]},
-    {"id": "T14", "title": "Train RoBERTa", "stage": "Training", "runner": "run_task14_train_roberta.sh", "heavy": True, "outputs": ["reports/task14/E03_RoBERTa_VersionA_metrics.json", "reports/task14/E04_RoBERTa_VersionB_metrics.json"]},
-    {"id": "T15", "title": "Full Test Evaluation", "stage": "Evaluation", "runner": "run_task15_model_evaluation.sh", "heavy": True, "outputs": ["reports/task15/task15_model_evaluation_summary.md"]},
-    {"id": "T16", "title": "Stopword Impact", "stage": "Evaluation", "runner": "run_task16_stopword_impact_analysis.sh", "heavy": False, "outputs": ["reports/task16/task16_stopword_impact_summary.md"]},
-    {"id": "T17", "title": "Model Comparison", "stage": "Evaluation", "runner": "run_task17_model_comparison.sh", "heavy": False, "outputs": ["reports/task17/task17_model_comparison_summary.md"]},
-    {"id": "T18", "title": "Error Analysis", "stage": "Interpretation", "runner": "run_task18_error_analysis.sh", "heavy": True, "outputs": ["reports/task18/task18_error_analysis_summary.md"]},
-    {"id": "T19", "title": "Final Model Selection", "stage": "Finalization", "runner": "run_task19_final_model_selection.sh", "heavy": False, "outputs": ["configs/final_model_config.json", "reports/task19/final_model_card.md"]},
-    {"id": "T20", "title": "Initial Demo", "stage": "Interface", "runner": "run_task20_demo.sh", "heavy": False, "outputs": ["src/predict_sarcasm.py"]},
-    {"id": "T21", "title": "Ethics and Limitations", "stage": "Responsible AI", "runner": "run_task21_ethics_limitations.sh", "heavy": False, "outputs": ["reports/task21/task21_ethics_and_limitations_summary.md"]},
-    {"id": "T22", "title": "Final Documentation", "stage": "Documentation", "runner": "run_task22_final_report.sh", "heavy": False, "outputs": ["reports/final_report/UM_WQF7007_Sarcasm_Detection_Final_Report.md"]},
-    {"id": "T23", "title": "Gradio Interface", "stage": "Interface", "runner": "run_gradio_dashboard.sh", "heavy": False, "outputs": ["app/gradio_app.py"]},
+    {"id": "T09", "stage": "Data", "name": "Preprocessing Version A", "runner": "run_task09_10_exact.sh", "heavy": True, "outputs": ["data/processed/A.csv", "docs/task09_10_exact_reproduction_note.md"]},
+    {"id": "T10", "stage": "Data", "name": "Preprocessing Version B", "runner": "run_task09_10_exact.sh", "heavy": True, "outputs": ["data/processed/B.csv", "docs/task09_10_exact_reproduction_note.md"]},
+    {"id": "T11", "stage": "Data", "name": "Train/Validation/Test Split", "runner": "run_task11_splits.sh", "heavy": False, "outputs": ["reports/task11_split_summary.md"]},
+    {"id": "T12", "stage": "Methodology", "name": "Experiment Design", "runner": "run_task12_experiment_design.sh", "heavy": False, "outputs": ["configs/task12_experiment_design.json"]},
+    {"id": "T13", "stage": "Training", "name": "Train BERTweet", "runner": "run_task13_train_bertweet.sh", "heavy": True, "outputs": ["reports/task13/E01_BERTweet_VersionA_metrics.json", "reports/task13/E02_BERTweet_VersionB_metrics.json"]},
+    {"id": "T14", "stage": "Training", "name": "Train RoBERTa", "runner": "run_task14_train_roberta.sh", "heavy": True, "outputs": ["reports/task14/E03_RoBERTa_VersionA_metrics.json", "reports/task14/E04_RoBERTa_VersionB_metrics.json"]},
+    {"id": "T15", "stage": "Evaluation", "name": "Full Test Evaluation", "runner": "run_task15_model_evaluation.sh", "heavy": True, "outputs": ["reports/task15/task15_model_evaluation_summary.md"]},
+    {"id": "T16", "stage": "Evaluation", "name": "Stopword Impact Analysis", "runner": "run_task16_stopword_impact_analysis.sh", "heavy": False, "outputs": ["reports/task16/task16_stopword_impact_summary.md"]},
+    {"id": "T17", "stage": "Evaluation", "name": "Model Comparison", "runner": "run_task17_model_comparison.sh", "heavy": False, "outputs": ["reports/task17/task17_model_comparison_summary.md"]},
+    {"id": "T18", "stage": "Interpretation", "name": "Error Analysis", "runner": "run_task18_error_analysis.sh", "heavy": True, "outputs": ["reports/task18/task18_error_analysis_summary.md"]},
+    {"id": "T19", "stage": "Finalization", "name": "Final Model Selection", "runner": "run_task19_final_model_selection.sh", "heavy": False, "outputs": ["configs/final_model_config.json", "reports/task19/final_model_card.md"]},
+    {"id": "T20", "stage": "Interface", "name": "Initial Demo", "runner": "run_task20_demo.sh", "heavy": False, "outputs": ["src/predict_sarcasm.py"]},
+    {"id": "T21", "stage": "Responsible AI", "name": "Ethics and Limitations", "runner": "run_task21_ethics_limitations.sh", "heavy": False, "outputs": ["reports/task21/task21_ethics_and_limitations_summary.md"]},
+    {"id": "T22", "stage": "Documentation", "name": "Final Documentation", "runner": "run_task22_final_report.sh", "heavy": False, "outputs": ["reports/final_report/UM_WQF7007_Sarcasm_Detection_Final_Report.md"]},
+    {"id": "T23", "stage": "Interface", "name": "Gradio Interface", "runner": "run_gradio_dashboard.sh", "heavy": False, "outputs": ["app/gradio_app.py"]},
+]
+
+DEFAULT_RESULTS = [
+    {"Experiment": "E03_RoBERTa_VersionA", "Model": "RoBERTa", "Version": "A", "Preprocessing": "Stopwords kept", "Accuracy": 0.7223, "Macro-F1": 0.7167, "Weighted-F1": 0.7165, "Rows": 96509},
+    {"Experiment": "E04_RoBERTa_VersionB", "Model": "RoBERTa", "Version": "B", "Preprocessing": "Stopwords removed", "Accuracy": 0.6773, "Macro-F1": 0.6648, "Weighted-F1": 0.6644, "Rows": 96509},
+    {"Experiment": "E01_BERTweet_VersionA", "Model": "BERTweet", "Version": "A", "Preprocessing": "Stopwords kept", "Accuracy": 0.5092, "Macro-F1": 0.3632, "Weighted-F1": 0.3615, "Rows": 96509},
+    {"Experiment": "E02_BERTweet_VersionB", "Model": "BERTweet", "Version": "B", "Preprocessing": "Stopwords removed", "Accuracy": 0.5018, "Macro-F1": 0.3452, "Weighted-F1": 0.3435, "Rows": 96509},
 ]
 
 
@@ -78,204 +87,238 @@ def safe_read_json(path: str | Path) -> Dict[str, Any]:
     if not p.exists():
         return {}
     try:
-        data = json.loads(p.read_text(encoding="utf-8", errors="replace"))
-        return data if isinstance(data, dict) else {}
+        value = json.loads(p.read_text(encoding="utf-8", errors="replace"))
+        return value if isinstance(value, dict) else {}
     except Exception:
         return {}
 
 
 def nested_get(data: Dict[str, Any], *paths: str, default: Any = None) -> Any:
     for path in paths:
-        current: Any = data
+        cur: Any = data
         ok = True
         for part in path.split("."):
-            if isinstance(current, dict) and part in current:
-                current = current[part]
+            if isinstance(cur, dict) and part in cur:
+                cur = cur[part]
             else:
                 ok = False
                 break
-        if ok and current not in (None, "", {}):
-            return current
+        if ok and cur not in (None, "", {}):
+            return cur
     return default
 
 
-def as_float(value: Any, default: float = 0.0) -> float:
+def to_float(value: Any, default: float = 0.0) -> float:
     try:
         return float(value)
     except Exception:
         return default
 
 
-def metric(data: Dict[str, Any], *keys: str, default: Optional[float] = None) -> Optional[float]:
+def metric(data: Dict[str, Any], *keys: str, default: float = 0.0) -> float:
     for key in keys:
         value = nested_get(data, key, default=None)
         if value is not None:
-            return as_float(value, default or 0.0)
+            return to_float(value, default)
     return default
 
 
+def clean_model_name(value: Any) -> str:
+    text = str(value or "RoBERTa V-A")
+    if "RoBERTa" in text or "roberta" in text.lower():
+        return "RoBERTa V-A" if "VersionB" not in text and "Version B" not in text else "RoBERTa V-B"
+    if "BERTweet" in text or "bertweet" in text.lower():
+        return "BERTweet V-A" if "VersionB" not in text and "Version B" not in text else "BERTweet V-B"
+    return "RoBERTa V-A"
+
+
 def load_metrics_table() -> pd.DataFrame:
-    paths = {
+    rows: List[Dict[str, Any]] = []
+    metric_files = {
         "E01_BERTweet_VersionA": "reports/task15/E01_BERTweet_VersionA_test_metrics.json",
         "E02_BERTweet_VersionB": "reports/task15/E02_BERTweet_VersionB_test_metrics.json",
         "E03_RoBERTa_VersionA": "reports/task15/E03_RoBERTa_VersionA_test_metrics.json",
         "E04_RoBERTa_VersionB": "reports/task15/E04_RoBERTa_VersionB_test_metrics.json",
     }
-    rows: List[Dict[str, Any]] = []
-    for exp, path in paths.items():
+    for exp, path in metric_files.items():
         data = safe_read_json(path)
         if not data:
             continue
-        version = "A" if "VersionA" in exp else "B"
         model = "BERTweet" if "BERTweet" in exp else "RoBERTa"
-        rows.append(
-            {
-                "Experiment": exp,
-                "Model": data.get("model_family", model),
-                "Version": version,
-                "Preprocessing": data.get("preprocessing", "Stopwords kept" if version == "A" else "Selective stopword removal"),
-                "Accuracy": round(metric(data, "metrics.accuracy", "accuracy", default=0.0) or 0.0, 4),
-                "Macro-F1": round(metric(data, "metrics.macro_f1", "macro_f1", default=0.0) or 0.0, 4),
-                "Weighted-F1": round(metric(data, "metrics.weighted_f1", "weighted_f1", default=0.0) or 0.0, 4),
-                "Macro Precision": round(metric(data, "metrics.macro_precision", "macro_precision", default=0.0) or 0.0, 4),
-                "Macro Recall": round(metric(data, "metrics.macro_recall", "macro_recall", default=0.0) or 0.0, 4),
-                "Rows": int(data.get("rows_evaluated", data.get("test_rows", 0)) or 0),
-            }
-        )
+        version = "A" if "VersionA" in exp else "B"
+        rows.append({
+            "Experiment": exp,
+            "Model": model,
+            "Version": version,
+            "Preprocessing": "Stopwords kept" if version == "A" else "Stopwords removed",
+            "Accuracy": round(metric(data, "metrics.accuracy", "accuracy"), 4),
+            "Macro-F1": round(metric(data, "metrics.macro_f1", "macro_f1"), 4),
+            "Weighted-F1": round(metric(data, "metrics.weighted_f1", "weighted_f1"), 4),
+            "Macro Precision": round(metric(data, "metrics.macro_precision", "macro_precision"), 4),
+            "Macro Recall": round(metric(data, "metrics.macro_recall", "macro_recall"), 4),
+            "Rows": int(data.get("rows_evaluated", data.get("test_rows", 0)) or 0),
+        })
+    if not rows:
+        rows = [dict(row) for row in DEFAULT_RESULTS]
     df = pd.DataFrame(rows)
-    if not df.empty:
-        df = df.sort_values("Macro-F1", ascending=False).reset_index(drop=True)
+    df = df.sort_values("Macro-F1", ascending=False).reset_index(drop=True)
+    if "Rank" not in df.columns:
         df.insert(0, "Rank", range(1, len(df) + 1))
     return df
 
 
-def compact_model_info() -> Dict[str, str]:
-    final_config = safe_read_json("configs/final_model_config.json")
-    final_summary = safe_read_json("reports/task19/task19_final_model_selection_summary.json")
+def final_info() -> Dict[str, Any]:
     df = load_metrics_table()
-
-    selected = nested_get(
-        final_summary,
-        "selected_experiment",
-        "selected_model.experiment_id",
-        "best_experiment.experiment_id",
-        default=None,
-    ) or nested_get(
-        final_config,
-        "selected_experiment",
-        "selected_model.experiment_id",
-        "final_model.experiment_id",
-        "experiment_id",
-        default="E03_RoBERTa_VersionA",
-    )
-    if isinstance(selected, dict):
-        selected = selected.get("experiment_id") or selected.get("name") or "E03_RoBERTa_VersionA"
-    selected = str(selected)
-
-    model_family = nested_get(final_summary, "model_family", "selected_model.model_family", default=None) or nested_get(final_config, "model_family", "selected_model.model_family", "final_model.model_family", default="RoBERTa")
-    version = "A" if "VersionA" in selected or "Version A" in selected else "B" if "VersionB" in selected or "Version B" in selected else "A"
-    preprocessing = nested_get(final_config, "preprocessing", "selected_model.preprocessing", "final_model.preprocessing", default="Stopwords kept")
-
-    accuracy = 0.7223
-    macro_f1 = 0.7167
-    weighted_f1 = 0.7165
-    if not df.empty:
-        top = df.iloc[0]
-        accuracy = as_float(top.get("Accuracy"), accuracy)
-        macro_f1 = as_float(top.get("Macro-F1"), macro_f1)
-        weighted_f1 = as_float(top.get("Weighted-F1"), weighted_f1)
-        model_family = str(top.get("Model", model_family))
-        version = str(top.get("Version", version))
-        preprocessing = str(top.get("Preprocessing", preprocessing))
-
+    top = df.iloc[0].to_dict() if not df.empty else DEFAULT_RESULTS[0]
     return {
-        "display": f"{model_family} V{version}",
-        "selected": selected,
-        "model_family": str(model_family),
-        "version": str(version),
-        "preprocessing": str(preprocessing),
-        "accuracy": f"{accuracy:.4f}",
-        "macro_f1": f"{macro_f1:.4f}",
-        "weighted_f1": f"{weighted_f1:.4f}",
+        "model": clean_model_name(top.get("Experiment")),
+        "preprocessing": str(top.get("Preprocessing", "Stopwords kept")),
+        "accuracy": to_float(top.get("Accuracy", 0.7223), 0.7223),
+        "macro_f1": to_float(top.get("Macro-F1", 0.7167), 0.7167),
+        "weighted_f1": to_float(top.get("Weighted-F1", 0.7165), 0.7165),
+        "rows": int(top.get("Rows", 96509) or 96509),
+        "experiment": str(top.get("Experiment", "E03_RoBERTa_VersionA")),
     }
 
 
-def task_status_df() -> pd.DataFrame:
+def task_status_rows() -> List[Dict[str, Any]]:
     rows = []
     for task in TASKS:
         outputs = task["outputs"]
-        passed = sum(1 for output in outputs if rel(output).exists())
+        passed = sum(1 for item in outputs if rel(item).exists())
         done = passed == len(outputs) and len(outputs) > 0
-        rows.append(
-            {
-                "Task": task["id"],
-                "Stage": task["stage"],
-                "Name": task["title"],
-                "Status": "✅ Done" if done else "⚠️ Local file missing",
-                "Checks": f"{passed}/{len(outputs)}",
-                "Heavy task": "Yes" if task.get("heavy") else "No",
-            }
-        )
-    return pd.DataFrame(rows)
+        rows.append({
+            "Task": task["id"],
+            "Stage": task["stage"],
+            "Name": task["name"],
+            "Status": "Done" if done else "Pending local file",
+            "Checks": f"{passed}/{len(outputs)}",
+            "Heavy": "Yes" if task.get("heavy") else "No",
+        })
+    return rows
 
 
 def workflow_progress() -> Tuple[int, int, float]:
-    df = task_status_df()
-    completed = int(df["Status"].str.contains("Done", regex=False).sum()) if not df.empty else 0
-    total = len(df)
-    pct = round((completed / total) * 100, 1) if total else 0.0
+    rows = task_status_rows()
+    total = len(rows)
+    completed = sum(1 for row in rows if row["Status"] == "Done")
+    pct = (completed / total * 100.0) if total else 0.0
     return completed, total, pct
 
 
-def hero_html() -> str:
-    info = compact_model_info()
+def html_table(rows: List[Dict[str, Any]]) -> str:
+    if not rows:
+        return "<div class='empty'>No rows available.</div>"
+    headers = list(rows[0].keys())
+    thead = "".join(f"<th>{esc(h)}</th>" for h in headers)
+    body = []
+    for row in rows:
+        cells = []
+        for h in headers:
+            val = row.get(h, "")
+            if h == "Status":
+                cls = "status-done" if str(val).lower().startswith("done") else "status-warn"
+                cells.append(f"<td><span class='{cls}'>{esc(val)}</span></td>")
+            else:
+                cells.append(f"<td>{esc(val)}</td>")
+        body.append("<tr>" + "".join(cells) + "</tr>")
+    return f"<div class='table-wrap'><table class='clean-table'><thead><tr>{thead}</tr></thead><tbody>{''.join(body)}</tbody></table></div>"
+
+
+def metric_cards() -> str:
+    info = final_info()
     completed, total, pct = workflow_progress()
     return f"""
-    <section class="hero-clean">
-      <div class="hero-copy">
-        <div class="kicker">WQF7007 NLP Project • Group 21</div>
-        <h1>Sarcasm Detection<br><span>NLP Dashboard</span></h1>
-        <p>A polished Gradio interface for exploring the complete sarcasm detection pipeline: preprocessing, model training, evaluation, model comparison, error analysis, ethics, and live prediction.</p>
-        <div class="pill-row">
-          <span>RoBERTa final model</span>
-          <span>Context-aware input</span>
-          <span>Stopwords kept</span>
-          <span>Research demo</span>
-        </div>
-      </div>
-      <div class="hero-metrics">
-        <div class="hero-card"><small>Final model</small><strong>{esc(info['display'])}</strong><em>{esc(info['preprocessing'])}</em></div>
-        <div class="hero-card"><small>Test accuracy</small><strong>{esc(info['accuracy'])}</strong><em>Held-out split</em></div>
-        <div class="hero-card"><small>Test Macro-F1</small><strong>{esc(info['macro_f1'])}</strong><em>Primary metric</em></div>
-        <div class="hero-card"><small>Workflow</small><strong>{completed}/{total}</strong><em>{pct:.1f}% complete</em></div>
-      </div>
-    </section>
-    <div class="progress-track"><div style="width:{pct}%"></div></div>
+    <div class="metric-grid">
+      <div class="metric-card"><span>Final model</span><strong>{esc(info['model'])}</strong><small>{esc(info['preprocessing'])}</small></div>
+      <div class="metric-card"><span>Test accuracy</span><strong>{info['accuracy']:.4f}</strong><small>Held-out test split</small></div>
+      <div class="metric-card"><span>Test Macro-F1</span><strong>{info['macro_f1']:.4f}</strong><small>Primary selection metric</small></div>
+      <div class="metric-card"><span>Workflow</span><strong>{completed}/{total}</strong><small>{pct:.1f}% completed</small></div>
+    </div>
     """
 
 
-@lru_cache(maxsize=8)
+def hero_html() -> str:
+    completed, total, pct = workflow_progress()
+    return f"""
+    <section class="hero">
+      <div class="hero-left">
+        <div class="kicker">WQF7007 NLP Project • Group 21</div>
+        <h1>Sarcasm Detection<br><span>NLP Dashboard</span></h1>
+        <p>Explore the complete Gradio-based sarcasm detection workflow: preprocessing, transformer training, evaluation, model comparison, reports, ethics, and live prediction.</p>
+        <div class="chips">
+          <span>Gradio UI</span><span>RoBERTa final model</span><span>Context-aware input</span><span>Stopwords kept</span>
+        </div>
+      </div>
+      <div class="hero-right">
+        {metric_cards()}
+      </div>
+    </section>
+    <div class="progress"><i style="width:{pct:.1f}%"></i></div>
+    """
+
+
+def overview_html() -> str:
+    info = final_info()
+    return f"""
+    <div class="content-grid">
+      <div class="panel">
+        <h2>Project snapshot</h2>
+        <p>This dashboard presents the complete sarcasm detection project in one place. The study compares BERTweet and RoBERTa under two preprocessing settings: Version A keeps stopwords, while Version B selectively removes stopwords but preserves important negations.</p>
+        <p>The selected final model is <b>{esc(info['model'])}</b> using <b>{esc(info['preprocessing'])}</b>. It achieved <b>{info['accuracy']:.4f}</b> accuracy and <b>{info['macro_f1']:.4f}</b> Macro-F1 on the held-out test split.</p>
+        <h3>What users can do here</h3>
+        <ol>
+          <li>Run live sarcasm predictions with optional Reddit parent-comment context.</li>
+          <li>View all four model results and stopword impact comparisons.</li>
+          <li>Browse generated reports without leaving the dashboard.</li>
+          <li>Check workflow completion and local task runners.</li>
+          <li>Review ethics, limitations, and hosting readiness.</li>
+        </ol>
+      </div>
+      <div class="panel highlight">
+        <h2>Final model</h2>
+        <div class="big-number">{esc(info['model'])}</div>
+        <p>{esc(info['preprocessing'])}</p>
+        <div class="mini-list">
+          <div><span>Accuracy</span><b>{info['accuracy']:.4f}</b></div>
+          <div><span>Macro-F1</span><b>{info['macro_f1']:.4f}</b></div>
+          <div><span>Test rows</span><b>{info['rows']:,}</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel"><h2>Workflow status</h2>{html_table(task_status_rows())}</div>
+    """
+
+
+@lru_cache(maxsize=4)
 def get_predictor(device: str = "auto"):
     if SarcasmPredictor is None:
         raise RuntimeError(f"Prediction module could not be imported: {PREDICTOR_IMPORT_ERROR}")
     return SarcasmPredictor(config_path=FINAL_CONFIG_PATH, device=device)
 
 
-def empty_prediction_card() -> str:
+def waiting_card() -> str:
     return """
-    <div class="result-card waiting">
-      <div class="result-badge">Waiting for input</div>
+    <div class="prediction-card waiting">
+      <span class="badge">Waiting for input</span>
       <h2>Enter text to classify</h2>
-      <p>Add a Reddit reply, optionally with parent-comment context, then click <b>Predict sarcasm</b>.</p>
-      <div class="mini-grid">
-        <span>Model: RoBERTa V-A</span>
-        <span>Max length: 128</span>
-      </div>
+      <p>Add a Reddit reply, optionally with parent-comment context, then run the final model.</p>
+      <div class="quick-meta"><span>Model: RoBERTa V-A</span><span>Max length: 128</span></div>
     </div>
     """
 
 
-def predict(parent_comment: str, comment: str, device: str = "auto") -> Tuple[str, Dict[str, float], str, Dict[str, Any]]:
+def probability_bars(prob_non: float = 0.0, prob_sarc: float = 0.0) -> str:
+    return f"""
+    <div class="prob-box">
+      <h3>Class probabilities</h3>
+      <div class="prob-row"><div><span>Non-sarcastic</span><b>{prob_non:.4f}</b></div><div class="bar"><i style="width:{prob_non*100:.1f}%"></i></div></div>
+      <div class="prob-row"><div><span>Sarcastic</span><b>{prob_sarc:.4f}</b></div><div class="bar alt"><i style="width:{prob_sarc*100:.1f}%"></i></div></div>
+    </div>
+    """
+
+
+def predict(parent_comment: str, comment: str, device: str) -> Tuple[str, str, str, str]:
     try:
         predictor = get_predictor(device)
         result = predictor.predict(comment=comment, parent_comment=parent_comment)
@@ -283,445 +326,400 @@ def predict(parent_comment: str, comment: str, device: str = "auto") -> Tuple[st
         prob_sarc = float(result.probability_sarcastic)
         confidence = float(result.confidence)
         is_sarc = result.label.lower().startswith("sarcastic")
-        status_class = "sarcastic" if is_sarc else "sincere"
-        emoji = "😏" if is_sarc else "🙂"
         verdict = "Sarcastic" if is_sarc else "Non-sarcastic"
-        short_note = "The model detected sarcastic intent." if is_sarc else "The model interpreted this as sincere or literal."
-
-        html_card = f"""
-        <div class="result-card {status_class}">
-          <div class="result-badge">Prediction result</div>
+        emoji = "😏" if is_sarc else "🙂"
+        tone = "sarcastic" if is_sarc else "neutral"
+        note = "The model detected sarcastic intent in the reply." if is_sarc else "The model interpreted the reply as sincere or literal."
+        card = f"""
+        <div class="prediction-card {tone}">
+          <span class="badge">Prediction result</span>
           <h2>{emoji} {verdict}</h2>
-          <p>{short_note}</p>
-          <div class="confidence-line"><span>Confidence</span><b>{confidence:.4f}</b></div>
-          <div class="bar-item"><div class="bar-label"><span>Non-sarcastic</span><b>{prob_non:.4f}</b></div><div class="bar"><i style="width:{prob_non*100:.1f}%"></i></div></div>
-          <div class="bar-item"><div class="bar-label"><span>Sarcastic</span><b>{prob_sarc:.4f}</b></div><div class="bar alt"><i style="width:{prob_sarc*100:.1f}%"></i></div></div>
+          <p>{note}</p>
+          <div class="confidence"><span>Confidence</span><b>{confidence:.4f}</b></div>
         </div>
         """
-        safe_technical = {
-            "label": verdict,
-            "confidence": round(confidence, 4),
-            "probability_non_sarcastic": round(prob_non, 4),
-            "probability_sarcastic": round(prob_sarc, 4),
-            "checkpoint_path": result.checkpoint_path,
-            "model_name": result.model_name,
-        }
-        return html_card, {"Non-sarcastic": prob_non, "Sarcastic": prob_sarc}, result.combined_text, safe_technical
+        details = f"Label: {verdict}\nConfidence: {confidence:.4f}\nP(non-sarcastic): {prob_non:.4f}\nP(sarcastic): {prob_sarc:.4f}\nModel: {result.model_name}\nCheckpoint: {result.checkpoint_path}"
+        return card, probability_bars(prob_non, prob_sarc), result.combined_text, details
     except Exception as exc:
         return f"""
-        <div class="result-card error">
-          <div class="result-badge">Prediction failed</div>
-          <h2>⚠️ Model unavailable</h2>
+        <div class="prediction-card error">
+          <span class="badge">Prediction unavailable</span>
+          <h2>Model could not run</h2>
           <p>{esc(exc)}</p>
-          <p class="tiny">Check that <code>models/roberta/versionA</code> exists locally or update the model path in <code>configs/final_model_config.json</code>.</p>
         </div>
-        """, {}, "", {"error": str(exc)}
+        """, probability_bars(), "", str(exc)
 
 
-def model_metric_figure(metric_name: str = "Macro-F1"):
+def results_html() -> str:
     df = load_metrics_table()
-    fig, ax = plt.subplots(figsize=(8.8, 4.2))
-    fig.patch.set_facecolor("#ffffff")
-    ax.set_facecolor("#ffffff")
-    if df.empty or metric_name not in df.columns:
-        ax.text(0.5, 0.5, "No metric files found", ha="center", va="center", fontsize=13)
-        ax.axis("off")
-        return fig
-    labels = [f"{row['Model']} V{row['Version']}" for _, row in df.iterrows()]
-    values = df[metric_name].astype(float).tolist()
-    colors = ["#16a34a" if i == 0 else "#7c3aed" if "RoBERTa" in labels[i] else "#0ea5e9" for i in range(len(labels))]
-    bars = ax.bar(labels, values, color=colors, alpha=0.88)
-    ax.set_title(f"Model comparison by {metric_name}", fontsize=14, pad=14, weight="bold")
-    ax.set_ylabel(metric_name)
-    ax.set_ylim(0, max(1.0, max(values) + 0.08))
-    ax.spines[["top", "right"]].set_visible(False)
-    ax.grid(axis="y", alpha=0.18)
-    for bar, val in zip(bars, values):
-        ax.text(bar.get_x() + bar.get_width() / 2, val + 0.015, f"{val:.4f}", ha="center", fontsize=10, weight="bold")
-    ax.tick_params(axis="x", rotation=15)
-    fig.tight_layout()
-    return fig
+    rows = df.to_dict("records")
+    info = final_info()
+    roberta_a = float(df[df["Experiment"].eq("E03_RoBERTa_VersionA")]["Macro-F1"].iloc[0]) if "E03_RoBERTa_VersionA" in set(df["Experiment"]) else 0.7167
+    roberta_b = float(df[df["Experiment"].eq("E04_RoBERTa_VersionB")]["Macro-F1"].iloc[0]) if "E04_RoBERTa_VersionB" in set(df["Experiment"]) else 0.6648
+    bertweet_a = float(df[df["Experiment"].eq("E01_BERTweet_VersionA")]["Macro-F1"].iloc[0]) if "E01_BERTweet_VersionA" in set(df["Experiment"]) else 0.3632
+    bertweet_b = float(df[df["Experiment"].eq("E02_BERTweet_VersionB")]["Macro-F1"].iloc[0]) if "E02_BERTweet_VersionB" in set(df["Experiment"]) else 0.3452
+
+    def bar(label: str, value: float, color: str) -> str:
+        width = max(2, min(100, value * 100))
+        return f"<div class='metric-bar'><div><span>{esc(label)}</span><b>{value:.4f}</b></div><em><i style='width:{width:.1f}%;background:{color}'></i></em></div>"
+
+    return f"""
+    <div class="panel">
+      <h2>Model comparison</h2>
+      <p>All four experiments were evaluated on the same held-out test split. Macro-F1 is the main selection metric because it balances both sarcastic and non-sarcastic classes.</p>
+      {html_table(rows)}
+    </div>
+    <div class="content-grid">
+      <div class="panel">
+        <h2>Macro-F1 ranking</h2>
+        {bar('RoBERTa Version A', roberta_a, '#2563eb')}
+        {bar('RoBERTa Version B', roberta_b, '#06b6d4')}
+        {bar('BERTweet Version A', bertweet_a, '#7c3aed')}
+        {bar('BERTweet Version B', bertweet_b, '#a855f7')}
+      </div>
+      <div class="panel highlight">
+        <h2>Final decision</h2>
+        <div class="big-number">{esc(info['model'])}</div>
+        <p>The best model is <b>{esc(info['model'])}</b> because it achieved the highest held-out test Macro-F1 of <b>{info['macro_f1']:.4f}</b> and accuracy of <b>{info['accuracy']:.4f}</b>.</p>
+        <p>The results also showed that keeping stopwords performed better than selective stopword removal for both model families.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Stopword impact</h2>
+      {bar('RoBERTa stopwords kept', roberta_a, '#16a34a')}
+      {bar('RoBERTa stopwords removed', roberta_b, '#ef4444')}
+      {bar('BERTweet stopwords kept', bertweet_a, '#16a34a')}
+      {bar('BERTweet stopwords removed', bertweet_b, '#ef4444')}
+    </div>
+    """
 
 
-def stopword_figure():
-    df = load_metrics_table()
-    fig, ax = plt.subplots(figsize=(8.8, 4.2))
-    fig.patch.set_facecolor("#ffffff")
-    ax.set_facecolor("#ffffff")
-    if df.empty:
-        ax.text(0.5, 0.5, "No metric files found", ha="center", va="center", fontsize=13)
-        ax.axis("off")
-        return fig
-    pivot = df.pivot_table(index="Model", columns="Version", values="Macro-F1", aggfunc="first")
-    models = list(pivot.index)
-    x = range(len(models))
-    width = 0.34
-    kept = [float(pivot.loc[m].get("A", 0.0)) for m in models]
-    removed = [float(pivot.loc[m].get("B", 0.0)) for m in models]
-    ax.bar([i - width / 2 for i in x], kept, width=width, label="Version A • kept", color="#16a34a", alpha=0.88)
-    ax.bar([i + width / 2 for i in x], removed, width=width, label="Version B • removed", color="#ef4444", alpha=0.78)
-    ax.set_title("Stopword impact on Macro-F1", fontsize=14, pad=14, weight="bold")
-    ax.set_ylabel("Macro-F1")
-    ax.set_xticks(list(x))
-    ax.set_xticklabels(models)
-    ax.set_ylim(0, max(1.0, max(kept + removed) + 0.08))
-    ax.legend(frameon=False)
-    ax.spines[["top", "right"]].set_visible(False)
-    ax.grid(axis="y", alpha=0.18)
-    fig.tight_layout()
-    return fig
-
-
-def confusion_figure(experiment: str = "E03_RoBERTa_VersionA"):
-    data = safe_read_json(f"reports/task15/{experiment}_test_metrics.json")
-    cm = nested_get(data, "confusion_matrix", "metrics.confusion_matrix", default=None)
-    fig, ax = plt.subplots(figsize=(4.5, 4.2))
-    fig.patch.set_facecolor("#ffffff")
-    ax.set_facecolor("#ffffff")
-    if not cm:
-        ax.text(0.5, 0.5, "Confusion matrix not found", ha="center", va="center")
-        ax.axis("off")
-        return fig
-    import numpy as np
-    arr = np.array(cm)
-    im = ax.imshow(arr, cmap="Blues")
-    ax.set_title(experiment.replace("_", " "), fontsize=11, weight="bold")
-    ax.set_xticks([0, 1], labels=["Pred 0", "Pred 1"])
-    ax.set_yticks([0, 1], labels=["True 0", "True 1"])
-    for i in range(arr.shape[0]):
-        for j in range(arr.shape[1]):
-            ax.text(j, i, f"{arr[i, j]:,}", ha="center", va="center", color="#111827", weight="bold")
-    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-    fig.tight_layout()
-    return fig
+def workflow_html() -> str:
+    return f"<div class='panel'><h2>End-to-end workflow</h2><p>This table checks the major project tasks from preprocessing to final documentation and Gradio interface.</p>{html_table(task_status_rows())}</div>"
 
 
 def report_files() -> List[str]:
-    candidates: List[str] = []
-    for folder in ["reports", "docs"]:
-        base = rel(folder)
-        if not base.exists():
+    roots = [PROJECT_ROOT / "reports", PROJECT_ROOT / "docs"]
+    files: List[str] = []
+    for root in roots:
+        if not root.exists():
             continue
-        for pattern in ["*.md", "*.txt", "*.json", "*.csv"]:
-            candidates.extend(str(p.relative_to(PROJECT_ROOT)) for p in base.rglob(pattern))
-    priority = [
-        "reports/task15/task15_model_evaluation_summary.md",
-        "reports/task17/task17_model_comparison_summary.md",
-        "reports/task18/task18_error_analysis_summary.md",
-        "reports/task19/final_model_card.md",
-        "reports/task21/task21_ethics_and_limitations_summary.md",
-    ]
-    ordered = [p for p in priority if p in candidates] + sorted(p for p in candidates if p not in priority)
-    return ordered[:250]
+        for path in root.rglob("*"):
+            if path.is_file() and path.suffix.lower() in {".md", ".txt", ".json", ".csv"}:
+                files.append(str(path.relative_to(PROJECT_ROOT)))
+    preferred = "reports/task15/task15_model_evaluation_summary.md"
+    files = sorted(files)
+    if preferred in files:
+        files.remove(preferred)
+        files.insert(0, preferred)
+    return files
 
 
-def load_report(path: str) -> Tuple[str, Optional[pd.DataFrame]]:
+def load_report(path: str) -> str:
     if not path:
-        return "Select a report first.", None
+        return "Select a report file."
     p = rel(path)
-    if not p.exists():
-        return f"Report not found: `{path}`", None
+    if not p.exists() or p.is_dir():
+        return f"Report not found: `{path}`"
+    text = p.read_text(encoding="utf-8", errors="replace")
     suffix = p.suffix.lower()
-    if suffix == ".csv":
-        try:
-            return f"### {path}\n\nCSV preview below.", pd.read_csv(p).head(200)
-        except Exception as exc:
-            return f"Could not load CSV: {exc}", None
     if suffix == ".json":
         try:
-            return "```json\n" + json.dumps(json.loads(p.read_text(encoding="utf-8")), indent=2)[:8000] + "\n```", None
+            parsed = json.loads(text)
+            text = json.dumps(parsed, indent=2)[:12000]
         except Exception:
-            return "```\n" + p.read_text(encoding="utf-8", errors="replace")[:8000] + "\n```", None
-    return p.read_text(encoding="utf-8", errors="replace")[:12000], None
+            text = text[:12000]
+        return f"### {esc(path)}\n```json\n{text}\n```"
+    if suffix == ".csv":
+        try:
+            df = pd.read_csv(p)
+            return f"### {esc(path)}\n" + df.head(20).to_markdown(index=False)
+        except Exception:
+            return f"### {esc(path)}\n```text\n{text[:12000]}\n```"
+    return text[:12000]
 
 
 def runner_choices() -> List[str]:
-    return [f"{task['id']} • {task['title']}" for task in TASKS if rel(task["runner"]).exists()]
+    return [f"{task['id']} — {task['name']} ({task['runner']})" for task in TASKS if rel(task["runner"]).exists()]
 
 
-def run_task(choice: str, confirm_heavy: bool, quick_mode: bool) -> str:
-    allow = os.getenv("GRADIO_ALLOW_TASK_RUNS", "1").lower() in {"1", "true", "yes"}
-    if not allow:
-        return "Task execution is disabled for this environment. Set GRADIO_ALLOW_TASK_RUNS=1 for local use."
+def run_task(choice: str, confirm: bool, quick: bool) -> str:
+    if os.getenv("GRADIO_ALLOW_TASK_RUNS", "1") not in {"1", "true", "yes"}:
+        return "Task execution is disabled for this dashboard."
     if not choice:
         return "Select a task first."
-    task_id = choice.split("•", 1)[0].strip()
-    task = next((t for t in TASKS if t["id"] == task_id), None)
+    task_id = choice.split(" — ", 1)[0]
+    task = next((item for item in TASKS if item["id"] == task_id), None)
     if not task:
-        return "Unknown task."
-    if task.get("heavy") and not confirm_heavy:
+        return "Task not found."
+    if task.get("heavy") and not confirm:
         return "This is a heavy task. Tick the confirmation box before running it."
     runner = rel(task["runner"])
     if not runner.exists():
         return f"Runner not found: {task['runner']}"
     env = os.environ.copy()
-    if quick_mode:
+    if quick:
         env.update({
-            "TASK13_MAX_TRAIN_SAMPLES": "5000",
-            "TASK13_MAX_VALID_SAMPLES": "1000",
-            "TASK14_MAX_TRAIN_SAMPLES": "5000",
-            "TASK14_MAX_VALID_SAMPLES": "1000",
-            "TASK15_MAX_TEST_SAMPLES": "5000",
+            "TASK13_MAX_TRAIN_SAMPLES": "128",
+            "TASK13_MAX_VALID_SAMPLES": "128",
+            "TASK14_MAX_TRAIN_SAMPLES": "128",
+            "TASK14_MAX_VALID_SAMPLES": "128",
+            "TASK15_MAX_TEST_SAMPLES": "2000",
         })
-    log_name = f"{task_id.lower()}_{int(time.time())}.log"
-    log_path = UI_RUNS_DIR / log_name
-    process = subprocess.run(["bash", str(runner)], cwd=PROJECT_ROOT, env=env, capture_output=True, text=True, timeout=60 * 60)
-    combined = (process.stdout or "") + "\n" + (process.stderr or "")
-    log_path.write_text(combined, encoding="utf-8")
-    status = "completed" if process.returncode == 0 else f"failed with exit code {process.returncode}"
-    return f"Task {task_id} {status}. Log saved to {log_path.relative_to(PROJECT_ROOT)}\n\n" + combined[-10000:]
+    start = time.strftime("%Y%m%d_%H%M%S")
+    log_file = UI_RUNS_DIR / f"{task_id}_{start}.log"
+    process = subprocess.run(["bash", str(runner)], cwd=PROJECT_ROOT, env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=7200)
+    log_file.write_text(process.stdout, encoding="utf-8")
+    status = "completed" if process.returncode == 0 else f"failed with code {process.returncode}"
+    return f"Task {task_id} {status}.\nLog saved to {log_file.relative_to(PROJECT_ROOT)}\n\n" + process.stdout[-6000:]
 
 
-def overview_markdown() -> str:
-    info = compact_model_info()
+def ethics_html() -> str:
+    summary = safe_read_text("reports/task21/task21_ethics_and_limitations_summary.md", "")
     return f"""
-### Project snapshot
-
-This dashboard presents the complete sarcasm detection workflow in one place. The project compares **BERTweet** and **RoBERTa** under two preprocessing settings: Version A keeps stopwords, while Version B selectively removes stopwords but preserves important negations.
-
-The final selected model is **{info['display']}**, using **{info['preprocessing']}**. It achieved **{info['accuracy']} accuracy** and **{info['macro_f1']} Macro-F1** on the held-out test split.
-
-### What users can do here
-
-1. Test live sarcasm predictions with optional Reddit parent-comment context.  
-2. View the task-by-task workflow status.  
-3. Compare all four model experiments.  
-4. Browse generated reports and evaluation files.  
-5. Review error analysis, ethics, and hosting readiness notes.  
+    <div class="content-grid">
+      <div class="panel">
+        <h2>Responsible-use position</h2>
+        <p>This system is a coursework and research demonstration. It should not be used to automatically remove, penalize, or judge user content.</p>
+        <p>Sarcasm can depend on culture, speaker intent, conversation history, and external context. The model produces probability-based predictions, not guaranteed truth.</p>
+      </div>
+      <div class="panel highlight">
+        <h2>Hosting readiness</h2>
+        <p><b>Recommended:</b> Hugging Face Spaces with Gradio.</p>
+        <p>For public hosting, keep task execution disabled and load the final model from a Hugging Face model repository instead of a local checkpoint.</p>
+      </div>
+    </div>
+    <div class="panel"><h2>Task 21 summary</h2><pre class="report-pre">{esc(summary[:5000])}</pre></div>
     """
-
-
-def ethics_and_hosting_markdown() -> str:
-    ethics = safe_read_text("reports/task21/task21_ethics_and_limitations_summary.md", "Task 21 ethics report was not found locally.")
-    hosting = """
-### Hosting plan
-
-For local presentation, this Gradio interface loads the final checkpoint from `models/roberta/versionA`. For Hugging Face Spaces, the recommended setup is to upload the final model checkpoint to a Hugging Face model repository and update `configs/final_model_config.json` to load the model from that hosted path.
-
-For public hosting, keep task execution disabled by setting:
-
-```bash
-GRADIO_ALLOW_TASK_RUNS=0
-```
-
-This keeps the hosted app focused on inference, reports, and project explanation instead of long-running training tasks.
-    """
-    return ethics + "\n\n---\n\n" + hosting
 
 
 def custom_css() -> str:
     return """
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
     :root {
-      --ink:#0f172a;
-      --muted:#64748b;
-      --line:#e2e8f0;
-      --violet:#7c3aed;
-      --cyan:#06b6d4;
-      --green:#16a34a;
-      --rose:#e11d48;
-      --panel:#ffffff;
-      --soft:#f8fafc;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #475569;
+      --subtle: #e2e8f0;
+      --blue: #2563eb;
+      --cyan: #06b6d4;
+      --violet: #7c3aed;
+      --green: #16a34a;
+      --red: #dc2626;
+      --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
     }
+
     html, body, .gradio-container {
-      background: linear-gradient(180deg,#f8fbff 0%, #ffffff 45%, #f8fafc 100%) !important;
+      background: var(--bg) !important;
       color: var(--ink) !important;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+      font-size: 16px !important;
     }
+
     .gradio-container {
-      max-width: 1240px !important;
+      max-width: 1320px !important;
       margin: 0 auto !important;
-      padding: 22px !important;
+      padding: 28px 24px 56px !important;
     }
-    footer, .footer, .built-with, .settings {
-      display: none !important;
-      visibility: hidden !important;
+
+    * {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+      box-sizing: border-box;
     }
-    .hero-clean {
-      display:grid;
-      grid-template-columns: 1.08fr .92fr;
-      gap: 26px;
-      background:
-        radial-gradient(circle at 14% 12%, rgba(255,255,255,.25), transparent 28%),
-        linear-gradient(135deg,#15152e 0%, #312e81 40%, #0891b2 100%);
-      color:#fff;
+
+    h1, h2, h3, h4, p, li, span, label, button, input, textarea, select, table, th, td {
+      color: var(--ink) !important;
+      letter-spacing: normal !important;
+      opacity: 1 !important;
+    }
+
+    p, li { line-height: 1.65 !important; color: var(--muted) !important; }
+    label, .label-wrap span { color: var(--ink) !important; font-weight: 700 !important; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(380px, 0.9fr);
+      gap: 30px;
+      align-items: center;
+      padding: 44px;
       border-radius: 30px;
-      padding: 38px;
-      box-shadow: 0 24px 70px rgba(15,23,42,.22);
-      overflow:hidden;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(255,255,255,0.14), transparent 32%),
+        linear-gradient(135deg, #312e81 0%, #2563eb 56%, #0891b2 100%);
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+
+    .hero .kicker {
+      color: #a5f3fc !important;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.22em !important;
+      font-weight: 900;
       margin-bottom: 18px;
     }
-    .hero-copy h1 {
-      margin: 10px 0 16px;
-      font-size: clamp(38px, 6vw, 72px);
-      line-height: .95;
-      letter-spacing: -.06em;
-      color:#fff;
+
+    .hero h1 {
+      color: white !important;
+      font-size: clamp(42px, 5.2vw, 76px);
+      line-height: 0.95;
+      letter-spacing: -0.055em !important;
+      margin: 0 0 22px;
+      font-weight: 900;
     }
-    .hero-copy h1 span { color:#c4f1ff; }
-    .hero-copy p {
-      max-width: 760px;
-      font-size: 17px;
-      line-height: 1.7;
-      color: rgba(255,255,255,.86);
-      margin: 0 0 24px;
-    }
-    .kicker {
-      font-weight: 800;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      font-size: 12px;
-      color:#a5f3fc;
-    }
-    .pill-row {
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-    .pill-row span {
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.2);
+
+    .hero h1 span { color: #cffafe !important; }
+    .hero p { color: rgba(255,255,255,0.90) !important; max-width: 720px; font-size: 18px; margin-bottom: 22px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chips span {
+      color: white !important;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.13);
       border-radius: 999px;
-      padding: 9px 13px;
-      font-size: 13px;
-      color:#fff;
+      padding: 9px 14px;
+      font-weight: 700;
       backdrop-filter: blur(8px);
     }
-    .hero-metrics {
-      display:grid;
-      grid-template-columns: repeat(2,minmax(0,1fr));
-      gap:14px;
-      align-content:center;
-    }
-    .hero-card {
-      min-width:0;
+
+    .metric-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .metric-card {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.24);
       border-radius: 22px;
-      padding: 18px;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.22);
+      padding: 20px;
+      min-height: 126px;
       backdrop-filter: blur(10px);
-      overflow:hidden;
     }
-    .hero-card small {
-      display:block;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      font-size: 11px;
-      color:#dbeafe;
-      margin-bottom: 8px;
-      font-weight:800;
+    .metric-card span { display:block; color:#dbeafe !important; text-transform:uppercase; letter-spacing:0.14em !important; font-weight:900; font-size:12px; margin-bottom:10px; }
+    .metric-card strong { display:block; color:white !important; font-size:32px; font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .metric-card small { color:#e0f2fe !important; font-weight:600; }
+
+    .progress { height: 10px; border-radius: 999px; background:#e2e8f0; overflow:hidden; margin-bottom:22px; }
+    .progress i { display:block; height:100%; background:linear-gradient(90deg, var(--violet), var(--blue), var(--cyan)); border-radius:inherit; }
+
+    .tabs { border: 0 !important; }
+    .tab-nav { border-bottom: 1px solid #cbd5e1 !important; margin-bottom: 22px !important; }
+    .tab-nav button, .tabs button {
+      color: #334155 !important;
+      background: transparent !important;
+      font-weight: 800 !important;
+      font-size: 15px !important;
+      border-radius: 14px 14px 0 0 !important;
+      opacity: 1 !important;
     }
-    .hero-card strong {
-      display:block;
-      font-size: clamp(22px, 3vw, 33px);
-      line-height:1.08;
-      color:#fff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .tab-nav button.selected, .tabs button.selected {
+      color: var(--violet) !important;
+      background: #f5f3ff !important;
+      border-bottom: 3px solid var(--violet) !important;
     }
-    .hero-card em {
-      display:block;
-      margin-top:8px;
-      font-style:normal;
-      color:rgba(255,255,255,.76);
-      font-size: 13px;
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--subtle);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.05);
+      margin-bottom: 18px;
     }
-    .progress-track {
-      height: 10px;
-      background: #e2e8f0;
-      border-radius: 999px;
-      overflow:hidden;
-      margin: 12px 0 22px;
-    }
-    .progress-track div {
-      height:100%;
-      border-radius:999px;
-      background: linear-gradient(90deg,var(--violet),var(--cyan));
-    }
-    .gradio-container button.primary, button.primary {
-      background: linear-gradient(135deg,var(--violet),var(--cyan)) !important;
-      border:0 !important;
-      color:white !important;
-      font-weight:800 !important;
-      border-radius: 14px !important;
-      box-shadow: 0 12px 28px rgba(124,58,237,.22) !important;
-    }
-    .result-card {
+    .panel h2 { margin: 0 0 10px; font-size: 22px; font-weight: 900; color: var(--ink) !important; }
+    .panel h3 { color: var(--ink) !important; }
+    .panel.highlight { background: linear-gradient(180deg, #ffffff, #f8fafc); }
+    .big-number { font-size: 31px; line-height:1.1; color: var(--blue) !important; font-weight:900; margin: 12px 0; }
+
+    .content-grid { display:grid; grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr); gap:18px; align-items:start; }
+    .mini-list div { display:flex; justify-content:space-between; border-top:1px solid var(--subtle); padding:10px 0; }
+    .mini-list span { color: var(--muted) !important; }
+    .mini-list b { color: var(--ink) !important; }
+
+    .prediction-card {
+      border: 1px solid var(--subtle);
+      background: white;
       border-radius: 26px;
       padding: 28px;
-      background: #fff;
-      border: 1px solid var(--line);
-      box-shadow: 0 18px 40px rgba(15,23,42,.08);
-      min-height: 280px;
+      box-shadow: var(--shadow);
+      min-height: 210px;
     }
-    .result-card h2 {
-      margin: 12px 0 8px;
-      font-size: 34px;
-      letter-spacing:-.03em;
-      color: var(--ink);
-    }
-    .result-card p {
-      color: var(--muted);
-      line-height: 1.55;
-    }
-    .result-card.waiting { background: linear-gradient(135deg,#ffffff,#f8fafc); }
-    .result-card.sarcastic { background: linear-gradient(135deg,#fff7ed,#ffffff 60%); border-color:#fed7aa; }
-    .result-card.sincere { background: linear-gradient(135deg,#ecfeff,#ffffff 60%); border-color:#bae6fd; }
-    .result-card.error { background: linear-gradient(135deg,#fff1f2,#ffffff 60%); border-color:#fecdd3; }
-    .result-badge {
-      display:inline-flex;
+    .prediction-card h2 { font-size: 34px; margin: 18px 0 10px; font-weight:900; color: var(--ink) !important; }
+    .prediction-card p { color: var(--muted) !important; }
+    .prediction-card.sarcastic { border-color:#fecaca; background:linear-gradient(180deg,#fff7ed,#ffffff); }
+    .prediction-card.neutral { border-color:#bfdbfe; background:linear-gradient(180deg,#eff6ff,#ffffff); }
+    .prediction-card.error { border-color:#fecaca; background:#fff1f2; }
+    .badge {
+      display:inline-block;
       background:#eef2ff;
-      color:#4f46e5;
+      color:#4f46e5 !important;
       border-radius:999px;
-      padding:7px 11px;
-      font-size:12px;
+      padding:7px 12px;
       text-transform:uppercase;
-      letter-spacing:.1em;
       font-weight:900;
+      letter-spacing:.12em !important;
+      font-size:12px;
     }
-    .confidence-line {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding: 14px 0;
-      margin: 14px 0;
-      border-top:1px solid var(--line);
-      border-bottom:1px solid var(--line);
-    }
-    .confidence-line span { color:var(--muted); font-weight:700; }
-    .confidence-line b { font-size: 24px; color:var(--ink); }
-    .bar-item { margin: 15px 0; }
-    .bar-label { display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px; color:var(--ink); }
-    .bar { height: 12px; border-radius: 999px; overflow:hidden; background:#e2e8f0; }
-    .bar i { display:block; height:100%; background: linear-gradient(90deg,var(--green),#22c55e); border-radius:999px; }
-    .bar.alt i { background: linear-gradient(90deg,var(--violet),#f97316); }
-    .mini-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:10px; margin-top:18px; }
-    .mini-grid span { background:#f1f5f9; border:1px solid #e2e8f0; border-radius:14px; padding:10px; color:#475569; font-size:13px; }
-    .tiny { font-size: 13px !important; }
-    .section-note {
-      padding: 18px 20px;
-      border-radius: 20px;
-      background: #fff;
-      border: 1px solid var(--line);
-      box-shadow: 0 12px 30px rgba(15,23,42,.05);
-      margin-bottom: 16px;
-    }
-    .section-note h3 { margin-top:0; color: var(--ink); }
-    .section-note p { color: var(--muted); line-height:1.65; }
-    .tabs button, .tab-nav button {
-      font-weight: 800 !important;
-      border-radius: 14px !important;
-    }
-    .dataframe, table {
-      font-size: 13px !important;
-    }
-    textarea, input, select {
+    .confidence { display:flex; justify-content:space-between; border-top:1px solid var(--subtle); padding-top:16px; margin-top:18px; }
+    .confidence b { font-size:24px; color:var(--ink) !important; }
+    .quick-meta { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; margin-top:20px; }
+    .quick-meta span { border:1px solid var(--subtle); border-radius:16px; padding:12px; background:#f8fafc; color:#334155 !important; font-weight:600; }
+
+    .prob-box { background:white; border:1px solid var(--subtle); border-radius:22px; padding:20px; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.04); }
+    .prob-box h3 { margin:0 0 18px; color: var(--ink) !important; }
+    .prob-row { margin: 14px 0; }
+    .prob-row div:first-child, .metric-bar div { display:flex; justify-content:space-between; gap:12px; margin-bottom:8px; }
+    .prob-row span, .metric-bar span { color:var(--muted) !important; font-weight:700; }
+    .prob-row b, .metric-bar b { color:var(--ink) !important; }
+    .bar, .metric-bar em { display:block; height:12px; border-radius:999px; background:#e2e8f0; overflow:hidden; }
+    .bar i, .metric-bar i { display:block; height:100%; width:0; background:linear-gradient(90deg,var(--blue),var(--cyan)); border-radius:inherit; }
+    .bar.alt i { background:linear-gradient(90deg,var(--violet),#ec4899); }
+    .metric-bar { margin: 16px 0; }
+
+    textarea, input, select, .wrap, .block {
       border-radius: 16px !important;
     }
+    textarea, input, select {
+      color: var(--ink) !important;
+      background: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      font-size: 15px !important;
+    }
+    textarea::placeholder, input::placeholder { color:#94a3b8 !important; }
+    button.primary, .primary {
+      background: linear-gradient(90deg, var(--violet), var(--blue), var(--cyan)) !important;
+      color: #ffffff !important;
+      border: 0 !important;
+      font-weight: 900 !important;
+      border-radius: 16px !important;
+      box-shadow: 0 12px 24px rgba(37,99,235,.18) !important;
+    }
+    button.secondary { background:#f8fafc !important; color:var(--ink) !important; }
+
+    .table-wrap { overflow:auto; border:1px solid var(--subtle); border-radius:18px; }
+    table.clean-table { width:100%; border-collapse:collapse; background:white; font-size:14px; }
+    table.clean-table th { background:#f1f5f9; color:#0f172a !important; text-align:left; padding:13px; font-weight:900; border-bottom:1px solid var(--subtle); }
+    table.clean-table td { color:#334155 !important; padding:13px; border-bottom:1px solid #eef2f7; vertical-align:top; }
+    table.clean-table tr:hover td { background:#f8fafc; }
+    .status-done { color:#166534 !important; background:#dcfce7; border-radius:999px; padding:5px 9px; font-weight:900; display:inline-block; }
+    .status-warn { color:#92400e !important; background:#fef3c7; border-radius:999px; padding:5px 9px; font-weight:900; display:inline-block; }
+
+    .report-pre, pre, code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+      color:#0f172a !important;
+      background:#f8fafc !important;
+      border-radius:14px;
+      padding:14px;
+      white-space:pre-wrap;
+    }
+
+    footer { display:none !important; }
+    .gradio-container .svelte-1ipelgc { color:var(--ink) !important; }
+
     @media (max-width: 980px) {
-      .hero-clean { grid-template-columns: 1fr; padding: 28px; }
-      .hero-metrics { grid-template-columns: 1fr; }
-      .hero-card strong { white-space: normal; }
+      .hero, .content-grid { grid-template-columns:1fr; }
+      .hero { padding:28px; }
+      .metric-grid { grid-template-columns:1fr; }
+      .quick-meta { grid-template-columns:1fr; }
     }
     """
 
@@ -729,31 +727,17 @@ def custom_css() -> str:
 def build_app() -> gr.Blocks:
     with gr.Blocks(
         title=APP_TITLE,
-        theme=gr.themes.Soft(primary_hue="violet", secondary_hue="cyan", neutral_hue="slate"),
+        theme=gr.themes.Soft(primary_hue="blue", secondary_hue="cyan", neutral_hue="slate"),
         css=custom_css(),
     ) as demo:
         gr.HTML(hero_html())
 
         with gr.Tabs():
             with gr.Tab("🏠 Overview"):
-                with gr.Row():
-                    with gr.Column(scale=2):
-                        gr.Markdown(overview_markdown())
-                    with gr.Column(scale=1):
-                        info = compact_model_info()
-                        gr.HTML(
-                            f"""
-                            <div class="section-note">
-                              <h3>Final model</h3>
-                              <p><b>{esc(info['display'])}</b><br>{esc(info['preprocessing'])}</p>
-                              <p><b>Accuracy:</b> {esc(info['accuracy'])}<br><b>Macro-F1:</b> {esc(info['macro_f1'])}</p>
-                            </div>
-                            """
-                        )
-                gr.Dataframe(value=task_status_df(), label="Workflow status", interactive=False, wrap=True, max_height=460)
+                gr.HTML(overview_html())
 
             with gr.Tab("🔮 Live Prediction"):
-                gr.HTML('<div class="section-note"><h3>Try the final model</h3><p>Use optional parent-comment context when the reply depends on conversation history. The app returns a prediction, confidence score, and class probabilities.</p></div>')
+                gr.HTML("<div class='panel'><h2>Try the final model</h2><p>Enter a reply comment and optionally add its parent comment. The model returns the class decision, confidence, class probabilities, and combined model input.</p></div>")
                 with gr.Row(equal_height=True):
                     with gr.Column(scale=1):
                         parent = gr.Textbox(label="Optional parent comment / context", lines=4, placeholder="Example: The deadline moved to tomorrow.")
@@ -761,7 +745,7 @@ def build_app() -> gr.Blocks:
                         device = gr.Dropdown(["auto", "cpu", "mps", "cuda"], value="auto", label="Inference device")
                         with gr.Row():
                             predict_btn = gr.Button("Predict sarcasm", variant="primary")
-                            clear_btn = gr.ClearButton([parent, comment])
+                            clear_btn = gr.ClearButton([parent, comment], value="Clear")
                         gr.Examples(
                             examples=[
                                 ["The deadline moved to tomorrow.", "Perfect, I love surprise deadlines.", "auto"],
@@ -772,59 +756,48 @@ def build_app() -> gr.Blocks:
                             inputs=[parent, comment, device],
                         )
                     with gr.Column(scale=1):
-                        pred_html = gr.HTML(empty_prediction_card())
-                        label_output = gr.Label(label="Class probabilities", num_top_classes=2)
+                        pred_html = gr.HTML(waiting_card())
+                        prob_html = gr.HTML(probability_bars())
                         with gr.Accordion("Combined model input", open=False):
                             combined_text = gr.Textbox(label="Text sent to model", lines=4, interactive=False)
-                        with gr.Accordion("Technical output", open=False):
-                            json_output = gr.JSON(label="Compact technical details")
-                predict_btn.click(predict, inputs=[parent, comment, device], outputs=[pred_html, label_output, combined_text, json_output])
+                        with gr.Accordion("Technical details", open=False):
+                            technical_text = gr.Textbox(label="Compact technical output", lines=7, interactive=False)
+                predict_btn.click(predict, inputs=[parent, comment, device], outputs=[pred_html, prob_html, combined_text, technical_text])
 
             with gr.Tab("📊 Results"):
-                gr.HTML('<div class="section-note"><h3>Model comparison</h3><p>All four experiments were evaluated on the same held-out test split. Macro-F1 is treated as the main selection metric.</p></div>')
-                gr.Dataframe(value=load_metrics_table(), label="Held-out test metrics", interactive=False, wrap=True, max_height=260)
-                with gr.Row():
-                    metric_selector = gr.Dropdown(["Macro-F1", "Accuracy", "Weighted-F1", "Macro Precision", "Macro Recall"], value="Macro-F1", label="Chart metric")
-                    metric_plot = gr.Plot(value=model_metric_figure("Macro-F1"), label="Metric comparison")
-                metric_selector.change(model_metric_figure, inputs=metric_selector, outputs=metric_plot)
-                stopword_plot = gr.Plot(value=stopword_figure(), label="Stopword impact")
-                with gr.Row():
-                    cm_choice = gr.Dropdown(
-                        ["E03_RoBERTa_VersionA", "E04_RoBERTa_VersionB", "E01_BERTweet_VersionA", "E02_BERTweet_VersionB"],
-                        value="E03_RoBERTa_VersionA",
-                        label="Confusion matrix",
-                    )
-                    cm_plot = gr.Plot(value=confusion_figure("E03_RoBERTa_VersionA"), label="Confusion matrix")
-                cm_choice.change(confusion_figure, inputs=cm_choice, outputs=cm_plot)
+                # Results tab is intentionally HTML-only to avoid the previous matplotlib/DataFrame rendering crash.
+                results_panel = gr.HTML(results_html())
+                refresh_results = gr.Button("Refresh results", variant="primary")
+                refresh_results.click(results_html, outputs=results_panel)
 
             with gr.Tab("🧭 Workflow"):
-                gr.HTML('<div class="section-note"><h3>End-to-end project flow</h3><p>This section shows how the project moved from data preprocessing to model comparison, error analysis, final selection, UI, and responsible-use reporting.</p></div>')
-                refresh_status = gr.Button("Refresh workflow status", variant="primary")
-                status_df = gr.Dataframe(value=task_status_df(), label="Task completion matrix", interactive=False, wrap=True, max_height=560)
-                refresh_status.click(task_status_df, outputs=status_df)
+                workflow_panel = gr.HTML(workflow_html())
+                refresh_workflow = gr.Button("Refresh workflow status", variant="primary")
+                refresh_workflow.click(workflow_html, outputs=workflow_panel)
 
             with gr.Tab("📚 Reports"):
-                gr.HTML('<div class="section-note"><h3>Reports explorer</h3><p>Browse generated Markdown, JSON, CSV, and text reports without leaving the dashboard.</p></div>')
-                report_dropdown = gr.Dropdown(choices=report_files(), label="Report file", value="reports/task15/task15_model_evaluation_summary.md" if rel("reports/task15/task15_model_evaluation_summary.md").exists() else None)
+                gr.HTML("<div class='panel'><h2>Reports explorer</h2><p>Browse generated Markdown, JSON, CSV, and text reports without leaving the dashboard.</p></div>")
+                reports = report_files()
+                report_dropdown = gr.Dropdown(choices=reports, value=reports[0] if reports else None, label="Report file")
                 with gr.Row():
-                    load_report_btn = gr.Button("Open report", variant="primary")
-                    refresh_reports_btn = gr.Button("Refresh file list")
-                report_md = gr.Markdown("Select a report and click **Open report**.")
-                report_table = gr.Dataframe(label="CSV preview", interactive=False, wrap=True, max_height=400)
-                load_report_btn.click(load_report, inputs=report_dropdown, outputs=[report_md, report_table])
-                refresh_reports_btn.click(lambda: gr.Dropdown(choices=report_files()), outputs=report_dropdown)
+                    open_report = gr.Button("Open report", variant="primary")
+                    refresh_report_list = gr.Button("Refresh file list")
+                report_output = gr.Markdown("Select a report and click **Open report**.")
+                open_report.click(load_report, inputs=report_dropdown, outputs=report_output)
+                refresh_report_list.click(lambda: gr.Dropdown(choices=report_files(), value=report_files()[0] if report_files() else None), outputs=report_dropdown)
 
             with gr.Tab("⚙️ Run Tasks"):
-                gr.HTML('<div class="section-note"><h3>Local pipeline runner</h3><p>This tab is for local use only. Heavy tasks such as model training can take time. Disable this tab for public Hugging Face hosting with <code>GRADIO_ALLOW_TASK_RUNS=0</code>.</p></div>')
-                task_select = gr.Dropdown(choices=runner_choices(), label="Task runner", value=runner_choices()[0] if runner_choices() else None)
-                confirm_heavy = gr.Checkbox(label="I understand this may run a heavy local task", value=False)
-                quick_mode = gr.Checkbox(label="Quick mode for supported heavy tasks", value=True)
+                gr.HTML("<div class='panel'><h2>Local pipeline runner</h2><p>This tab is for local use only. Heavy tasks such as training can take time. Disable task execution for hosted demos using <code>GRADIO_ALLOW_TASK_RUNS=0</code>.</p></div>")
+                choices = runner_choices()
+                task_select = gr.Dropdown(choices=choices, value=choices[0] if choices else None, label="Task runner")
+                confirm = gr.Checkbox(label="I understand this may run a heavy local task", value=False)
+                quick = gr.Checkbox(label="Quick mode for supported heavy tasks", value=True)
                 run_btn = gr.Button("Run selected task", variant="primary")
-                run_log = gr.Textbox(label="Task log", lines=18, max_lines=30)
-                run_btn.click(run_task, inputs=[task_select, confirm_heavy, quick_mode], outputs=run_log)
+                run_log = gr.Textbox(label="Task log", lines=18, interactive=False)
+                run_btn.click(run_task, inputs=[task_select, confirm, quick], outputs=run_log)
 
             with gr.Tab("🛡️ Ethics & Hosting"):
-                gr.Markdown(ethics_and_hosting_markdown())
+                gr.HTML(ethics_html())
 
     return demo
 
