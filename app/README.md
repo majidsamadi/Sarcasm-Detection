@@ -2,35 +2,32 @@
 
 This project now uses **Gradio** as the primary stakeholder-facing interface.
 
-## Primary Interface: Gradio Dashboard
+## Main Interface
 
-Run locally:
+Run the redesigned Gradio dashboard:
 
 ```bash
 bash run_gradio_dashboard.sh
 ```
 
-Main file:
+Then open:
 
 ```text
-app/gradio_app.py
+http://localhost:7860
 ```
 
-Hugging Face Spaces entry point:
+## What the Gradio Dashboard Includes
 
-```text
-app.py
-```
+- Live sarcasm prediction using the final RoBERTa Version A model.
+- Optional parent-comment context plus comment input.
+- Class probabilities and confidence score.
+- Model comparison dashboard.
+- Stopword impact and confusion matrix visualisations.
+- Workflow status from preprocessing to documentation.
+- Reports explorer.
+- Local task runner.
+- Ethics and hosting guidance.
 
-The Gradio dashboard includes live prediction, project workflow status, model comparison, stopword impact charts, report exploration, error analysis, ethics notes, and optional local task execution.
+## Legacy Interfaces
 
-## Legacy Interface: Streamlit
-
-The earlier Streamlit files are kept as reference/local backup files:
-
-```text
-app/streamlit_app.py
-app/enhanced_dashboard.py
-```
-
-For stakeholder presentation and hosting, use the Gradio dashboard.
+Earlier Streamlit interfaces may still exist in this folder for reference, but Gradio is now the primary interface because of the stakeholder requirement.

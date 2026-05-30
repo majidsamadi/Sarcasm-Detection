@@ -101,3 +101,7 @@ reports/**/local_only/**
 # Gradio/local UI runtime artifacts
 .gradio/
 reports/task23/local_only/
+reports/ui_runs/**
+reports/task23/local_only/**
+reports/task23b/local_only/**
+.gradio/**
